@@ -2,7 +2,10 @@ CC=gcc
 CFLAGS=-Wall -Wextra -Wpedantic
 LL=-L raylib -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
 
-.PHONY: all clean
+.PHONY: run all clean
+
+run: facecraft
+	./facecraft
 
 all: facecraft
 
