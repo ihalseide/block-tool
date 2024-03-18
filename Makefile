@@ -20,6 +20,7 @@ raylib/libraylib.a:
 	cd raylib/src && make PLATFORM=PLATFORM_DESKTOP # To make the static version.
 	cp raylib/src/libraylib.a raylib/
 	cp raylib/src/raylib.h raylib/
+	cp raylib/src/rlgl.h raylib/
 
 %.o: %.c raylib/libraylib.a
 	$(CC) -c $(CFLAGS) -o $@ $< $(LL)
