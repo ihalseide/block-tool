@@ -1,0 +1,4 @@
+*.o
+raylib/
+facecraft
+c_cpp_properties.json
