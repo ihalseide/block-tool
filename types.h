@@ -17,8 +17,13 @@ typedef struct BlockKind {
     int id;
 } BlockKind;
 
+typedef struct BlockPosition {
+    int x, y, z;
+} BlockPosition;
+
 typedef struct Block {
     BlockKind kind;
+    BlockPosition pos;
 } Block;
 
 typedef struct Panel {
@@ -26,8 +31,13 @@ typedef struct Panel {
     PanelKind kind;
 } Panel;
 
+typedef struct Blocks {
+    Block *da_start;
+} Blocks;
+
 typedef struct FaceCraft {
     Camera camera;
+    Blocks blocks;
 } FaceCraft;
 
 
