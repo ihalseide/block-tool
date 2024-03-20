@@ -2,42 +2,57 @@
 #define _FACECRAFT_TYPES_H_INCLUDED_
 
 
+#include <stdbool.h>
 #include "raylib/raylib.h"
 
 
-typedef struct CubeDirection {
-    int d;
+typedef enum CubeDirection {
+    CUBE_DIRECTION_TOP = 1,
+    CUBE_DIRECTION_BOTTOM,
+    CUBE_DIRECTION_LEFT,
+    CUBE_DIRECTION_RIGHT,
+    CUBE_DIRECTION_FRONT,
+    CUBE_DIRECTION_BACK,
 } CubeDirection;
 
-typedef struct PanelKind {
-    int id;
-} PanelKind;
+typedef struct BlockFaces {
+    int topIndex;
+    int bottomIndex;
+    int frontIndex;
+    int backIndex;
+    int leftIndex;
+    int rightIndex;
+} BlockFaces;
 
 typedef struct BlockKind {
-    int id;
+    BlockFaces faces;
 } BlockKind;
 
 typedef struct BlockPosition {
     int x, y, z;
 } BlockPosition;
 
-typedef struct Block {
-    BlockKind kind;
+typedef struct BlockPair {
     BlockPosition pos;
-} Block;
-
-typedef struct Panel {
-    CubeDirection dir;
-    PanelKind kind;
-} Panel;
+    int kindIndex;
+} BlockPair;
 
 typedef struct Blocks {
-    Block *da_start;
+    BlockPair *da_start;
 } Blocks;
 
-typedef struct FaceCraft {
-    Camera camera;
+typedef struct BlockKinds {
+    BlockKind *da_start;
+} BlockKinds;
+
+typedef struct BlockMap {
+    BlockKinds blockKinds;
     Blocks blocks;
+} BlockMap;
+
+typedef struct FaceCraft {
+    Camera cam;
+    BlockMap map;
 } FaceCraft;
 
 
