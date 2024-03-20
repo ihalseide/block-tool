@@ -118,13 +118,10 @@ int main() {
             ClearBackground(SKYBLUE);
             BeginMode3D(state->cam);
             {
-                DrawPlane((Vector3){ 0.0f, 0.0f, 0.0f }, (Vector2){ 32.0f, 32.0f }, BLUE);
-                DrawCube((Vector3){16.0f, 2.5f, 0.0f}, 1.0f, 5.0f, 32.0f, LIME);
+                DrawPlane((Vector3){ 0.0f, 0.0f, 0.0f }, (Vector2){ 32.0f, 32.0f }, BROWN);
+                DrawCube((Vector3){ 16.0f, 2.5f, 0.0f }, 1.0f, 5.0f, 32.0f, LIGHTGRAY);
                 for (int i = 0; i < arrlen(state->map.blocks.da_start); ++i) {
                     BlockPair bp = state->map.blocks.da_start[i];
-                    //DrawCube(mapBlockPositionToVector3(b.pos), 1, 1, 1, c);
-                    //drawCubeTexture(tex, mapBlockPositionToVector3(b.pos), 0.95f, 0.95f, 0.95f, WHITE);
-                    //drawCubeFaceTexture(tex, mapBlockPositionToVector3(b.pos), 1, WHITE, i % (CUBE_DIRECTION_BACK+1));
                     BlockKind kind = *mapGetBlockKindAtPosition(&state->map, bp.pos);
                     drawBlockKindAt(&state->blockTextureUVs, kind, mapBlockPositionToVector3(bp.pos), 0.95f, WHITE, -1);
                 }
@@ -132,7 +129,7 @@ int main() {
             EndMode3D();
             DrawText(TextFormat("Position: (%06.3f, %06.3f, %06.3f)",
                 state->cam.position.x, state->cam.position.y, state->cam.position.z),
-                610, 60, 10, GREEN);
+                610, 60, 10, BLACK);
         }
         EndDrawing();
     }
