@@ -8,7 +8,7 @@
 BlockPosition makeBlockPosition(int x, int y, int z);
 
 // Create a new BlockKind data value with an initial index that is the same for all of the faces.
-BlockKind makeBlockKind(int allFacesInitialIndex);
+BlockKind makeBlockKind(int allFacesInitialIndex, Texture2D texture);
 
 // Check if 2 Block Positions are equal
 bool blockPositionEqual(BlockPosition a, BlockPosition b);
@@ -39,6 +39,9 @@ const BlockKind *mapGetBlockKindAtPosition(const BlockMap *blockMap, BlockPositi
 
 // Map/convert from a `BlockPosition` to a `Vector3`
 Vector3 mapBlockPositionToVector3(BlockPosition blockPos);
+
+// Get the block face field corresponding to the cube direction.
+int blockFacesGetByDirection(BlockFaces faces, CubeDirection d);
 
 
 #endif //_FACECRAFT_BLOCKS_H_INCLUDED_

@@ -1,9 +1,30 @@
+#include <assert.h>
+
+#include "blocks.h"
 #include "drawing.h"
+
+#include "stb_ds.h"
 
 #include "raylib/rlgl.h"
 
 
-void drawCubeFaceTexture(Texture2D texture, Vector3 centerPos, float size, Color color, CubeDirection faceSide) {
+void drawBlockKindAt(const AtlasUVs *textureUVs, BlockKind blockKind, Vector3 centerPos, float size, Color color, long facesFlags) {
+    const int max_i = arrlen(textureUVs->da_start);
+    for (CubeDirection dir = 0; dir < 6; dir++) {
+        if (facesFlags & (1 << dir)) {
+            int lookupIndex = blockFacesGetByDirection(blockKind.faces, dir);
+            assert(BETWEEN(lookupIndex, 0, max_i));
+            UVPair uvPair = textureUVs->da_start[lookupIndex];
+            drawCubeFaceTexture(blockKind.texture, uvPair, centerPos, size, color, dir);
+        }
+    }
+}
+
+void drawCubeFaceTexture(Texture2D texture, UVPair uvPair, Vector3 centerPos, float size, Color color, CubeDirection faceSide) {
+    const float u1 = uvPair.u1;
+    const float v1 = uvPair.v1;
+    const float u2 = uvPair.u2;
+    const float v2 = uvPair.v2;
     const float x = centerPos.x;
     const float y = centerPos.y;
     const float z = centerPos.z;
@@ -18,50 +39,50 @@ void drawCubeFaceTexture(Texture2D texture, Vector3 centerPos, float size, Color
     case CUBE_DIRECTION_TOP:
         // Top Face
         rlNormal3f(0.0f, 1.0f, 0.0f);       // Normal Pointing Up
-        rlTexCoord2f(0.0f, 1.0f); rlVertex3f(x - width/2, y + height/2, z - length/2);  // Top Left Of The Texture and Quad
-        rlTexCoord2f(0.0f, 0.0f); rlVertex3f(x - width/2, y + height/2, z + length/2);  // Bottom Left Of The Texture and Quad
-        rlTexCoord2f(1.0f, 0.0f); rlVertex3f(x + width/2, y + height/2, z + length/2);  // Bottom Right Of The Texture and Quad
-        rlTexCoord2f(1.0f, 1.0f); rlVertex3f(x + width/2, y + height/2, z - length/2);  // Top Right Of The Texture and Quad
+        rlTexCoord2f(u1, v2); rlVertex3f(x - width/2, y + height/2, z - length/2);  // Top Left Of The Texture and Quad
+        rlTexCoord2f(u1, v1); rlVertex3f(x - width/2, y + height/2, z + length/2);  // Bottom Left Of The Texture and Quad
+        rlTexCoord2f(u2, v1); rlVertex3f(x + width/2, y + height/2, z + length/2);  // Bottom Right Of The Texture and Quad
+        rlTexCoord2f(u2, v2); rlVertex3f(x + width/2, y + height/2, z - length/2);  // Top Right Of The Texture and Quad
         break;
     case CUBE_DIRECTION_BOTTOM:
         // Bottom Face
         rlNormal3f(0.0f, - 1.0f, 0.0f);     // Normal Pointing Down
-        rlTexCoord2f(1.0f, 1.0f); rlVertex3f(x - width/2, y - height/2, z - length/2);  // Top Right Of The Texture and Quad
-        rlTexCoord2f(0.0f, 1.0f); rlVertex3f(x + width/2, y - height/2, z - length/2);  // Top Left Of The Texture and Quad
-        rlTexCoord2f(0.0f, 0.0f); rlVertex3f(x + width/2, y - height/2, z + length/2);  // Bottom Left Of The Texture and Quad
-        rlTexCoord2f(1.0f, 0.0f); rlVertex3f(x - width/2, y - height/2, z + length/2);  // Bottom Right Of The Texture and Quad
+        rlTexCoord2f(u2, v2); rlVertex3f(x - width/2, y - height/2, z - length/2);  // Top Right Of The Texture and Quad
+        rlTexCoord2f(u1, v2); rlVertex3f(x + width/2, y - height/2, z - length/2);  // Top Left Of The Texture and Quad
+        rlTexCoord2f(u1, v1); rlVertex3f(x + width/2, y - height/2, z + length/2);  // Bottom Left Of The Texture and Quad
+        rlTexCoord2f(u2, v1); rlVertex3f(x - width/2, y - height/2, z + length/2);  // Bottom Right Of The Texture and Quad
         break;
     case CUBE_DIRECTION_LEFT:
         // Left Face
         rlNormal3f( - 1.0f, 0.0f, 0.0f);    // Normal Pointing Left
-        rlTexCoord2f(0.0f, 0.0f); rlVertex3f(x - width/2, y - height/2, z - length/2);  // Bottom Left Of The Texture and Quad
-        rlTexCoord2f(1.0f, 0.0f); rlVertex3f(x - width/2, y - height/2, z + length/2);  // Bottom Right Of The Texture and Quad
-        rlTexCoord2f(1.0f, 1.0f); rlVertex3f(x - width/2, y + height/2, z + length/2);  // Top Right Of The Texture and Quad
-        rlTexCoord2f(0.0f, 1.0f); rlVertex3f(x - width/2, y + height/2, z - length/2);  // Top Left Of The Texture and Quad
+        rlTexCoord2f(u1, v2); rlVertex3f(x - width/2, y - height/2, z - length/2);  // Bottom Left Of The Texture and Quad
+        rlTexCoord2f(u2, v2); rlVertex3f(x - width/2, y - height/2, z + length/2);  // Bottom Right Of The Texture and Quad
+        rlTexCoord2f(u2, v1); rlVertex3f(x - width/2, y + height/2, z + length/2);  // Top Right Of The Texture and Quad
+        rlTexCoord2f(u1, v1); rlVertex3f(x - width/2, y + height/2, z - length/2);  // Top Left Of The Texture and Quad
         break;
     case CUBE_DIRECTION_RIGHT:
         // Right face
         rlNormal3f(1.0f, 0.0f, 0.0f);       // Normal Pointing Right
-        rlTexCoord2f(1.0f, 0.0f); rlVertex3f(x + width/2, y - height/2, z - length/2);  // Bottom Right Of The Texture and Quad
-        rlTexCoord2f(1.0f, 1.0f); rlVertex3f(x + width/2, y + height/2, z - length/2);  // Top Right Of The Texture and Quad
-        rlTexCoord2f(0.0f, 1.0f); rlVertex3f(x + width/2, y + height/2, z + length/2);  // Top Left Of The Texture and Quad
-        rlTexCoord2f(0.0f, 0.0f); rlVertex3f(x + width/2, y - height/2, z + length/2);  // Bottom Left Of The Texture and Quad
+        rlTexCoord2f(u2, v2); rlVertex3f(x + width/2, y - height/2, z - length/2);  // Bottom Right Of The Texture and Quad
+        rlTexCoord2f(u2, v1); rlVertex3f(x + width/2, y + height/2, z - length/2);  // Top Right Of The Texture and Quad
+        rlTexCoord2f(u1, v1); rlVertex3f(x + width/2, y + height/2, z + length/2);  // Top Left Of The Texture and Quad
+        rlTexCoord2f(u1, v2); rlVertex3f(x + width/2, y - height/2, z + length/2);  // Bottom Left Of The Texture and Quad
         break;
     case CUBE_DIRECTION_FRONT:
         // Front Face
         rlNormal3f(0.0f, 0.0f, 1.0f);       // Normal Pointing Towards Viewer
-        rlTexCoord2f(0.0f, 0.0f); rlVertex3f(x - width/2, y - height/2, z + length/2);  // Bottom Left Of The Texture and Quad
-        rlTexCoord2f(1.0f, 0.0f); rlVertex3f(x + width/2, y - height/2, z + length/2);  // Bottom Right Of The Texture and Quad
-        rlTexCoord2f(1.0f, 1.0f); rlVertex3f(x + width/2, y + height/2, z + length/2);  // Top Right Of The Texture and Quad
-        rlTexCoord2f(0.0f, 1.0f); rlVertex3f(x - width/2, y + height/2, z + length/2);  // Top Left Of The Texture and Quad
+        rlTexCoord2f(u1, v2); rlVertex3f(x - width/2, y - height/2, z + length/2);  // Bottom Left Of The Texture and Quad
+        rlTexCoord2f(u2, v2); rlVertex3f(x + width/2, y - height/2, z + length/2);  // Bottom Right Of The Texture and Quad
+        rlTexCoord2f(u2, v1); rlVertex3f(x + width/2, y + height/2, z + length/2);  // Top Right Of The Texture and Quad
+        rlTexCoord2f(u1, v1); rlVertex3f(x - width/2, y + height/2, z + length/2);  // Top Left Of The Texture and Quad
         break;
     case CUBE_DIRECTION_BACK:
         // Back Face
         rlNormal3f(0.0f, 0.0f, - 1.0f);     // Normal Pointing Away From Viewer
-        rlTexCoord2f(1.0f, 0.0f); rlVertex3f(x - width/2, y - height/2, z - length/2);  // Bottom Right Of The Texture and Quad
-        rlTexCoord2f(1.0f, 1.0f); rlVertex3f(x - width/2, y + height/2, z - length/2);  // Top Right Of The Texture and Quad
-        rlTexCoord2f(0.0f, 1.0f); rlVertex3f(x + width/2, y + height/2, z - length/2);  // Top Left Of The Texture and Quad
-        rlTexCoord2f(0.0f, 0.0f); rlVertex3f(x + width/2, y - height/2, z - length/2);  // Bottom Left Of The Texture and Quad
+        rlTexCoord2f(u2, v2); rlVertex3f(x - width/2, y - height/2, z - length/2);  // Bottom Right Of The Texture and Quad
+        rlTexCoord2f(u2, v1); rlVertex3f(x - width/2, y + height/2, z - length/2);  // Top Right Of The Texture and Quad
+        rlTexCoord2f(u1, v1); rlVertex3f(x + width/2, y + height/2, z - length/2);  // Top Left Of The Texture and Quad
+        rlTexCoord2f(u1, v2); rlVertex3f(x + width/2, y - height/2, z - length/2);  // Bottom Left Of The Texture and Quad
         break;
     default:
         break;

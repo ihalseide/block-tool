@@ -6,16 +6,20 @@
 #include "raylib/raylib.h"
 
 
+#define BETWEEN(x, mini, maxi) ((mini <= x) && (x <= maxi))
+
+
 typedef enum CubeDirection {
-    CUBE_DIRECTION_TOP = 1,
+    CUBE_DIRECTION_TOP,
     CUBE_DIRECTION_BOTTOM,
-    CUBE_DIRECTION_LEFT,
     CUBE_DIRECTION_RIGHT,
+    CUBE_DIRECTION_LEFT,
     CUBE_DIRECTION_FRONT,
     CUBE_DIRECTION_BACK,
 } CubeDirection;
 
 typedef struct BlockFaces {
+    // indices into an array of texture UVs for each face
     int topIndex;
     int bottomIndex;
     int frontIndex;
@@ -25,6 +29,7 @@ typedef struct BlockFaces {
 } BlockFaces;
 
 typedef struct BlockKind {
+    Texture2D texture;
     BlockFaces faces;
 } BlockKind;
 
@@ -50,9 +55,19 @@ typedef struct BlockMap {
     Blocks blocks;
 } BlockMap;
 
+typedef struct UVPair {
+    float u1, v1; // start/begin
+    float u2, v2; // stop/end
+} UVPair;
+
+typedef struct AtlasUVs {
+    UVPair *da_start;
+} AtlasUVs;
+
 typedef struct FaceCraft {
     Camera cam;
     BlockMap map;
+    AtlasUVs blockTextureUVs;
 } FaceCraft;
 
 

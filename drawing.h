@@ -5,9 +5,10 @@
 
 #include "types.h"
 
+void drawBlockKindAt(const AtlasUVs *textureUVs, BlockKind blockKind, Vector3 centerPos, float size, Color color, long facesFlags);
 
 // Draw cube face textured
-void drawCubeFaceTexture(Texture2D texture, Vector3 centerPos, float size, Color color, CubeDirection faceSide);
+void drawCubeFaceTexture(Texture2D texture, UVPair uvPair, Vector3 centerPos, float size, Color color, CubeDirection faceSide);
 
 // Draw cube textured
 // NOTE: Cube position is the center position
