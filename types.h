@@ -63,6 +63,7 @@ typedef struct FaceCraft {
     CubeDrawingAtlas cubeDrawAtlas;
     Camera cam;
     BlockPair *daBlocks; // dynamic array of `BlockPair`s
+    float cubeSize;
 } FaceCraft;
 
 

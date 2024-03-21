@@ -18,19 +18,22 @@
 static FaceCraft *state;
 
 
-int cubeGrass, cubeDirt;
+int cubeGrass, cubeDirt, cubeGrass2, cubeStone;
 
 
 void initCubeDrawingAtlas(Texture2D texture) {
     CubeDrawingAtlas *cda = &state->cubeDrawAtlas;
     *cda = makeCubeDrawingAtlas16(texture);
 
-    int squareGrassSide = cubeDrawingAtlasAddSquareFromIndex(cda, 0);
-    int squareGrass = cubeDrawingAtlasAddSquareFromIndex(cda, 1);
+    int squareGrassSide = cubeDrawingAtlasAddSquareFromIndex(cda, 3);
+    int squareGrass = cubeDrawingAtlasAddSquareFromIndex(cda, 4);
     int squareDirt = cubeDrawingAtlasAddSquareFromIndex(cda, 2);
+    int squareStone = cubeDrawingAtlasAddSquareFromIndex(cda, 1);
 
     cubeGrass = cubeDrawingAtlasAddCube(cda, makeBlockDrawingKind3(squareGrassSide, squareGrass, squareDirt));
     cubeDirt = cubeDrawingAtlasAddCube(cda, makeBlockDrawingKind1(squareDirt));
+    cubeGrass2 = cubeDrawingAtlasAddCube(cda, makeBlockDrawingKind1(squareGrass));
+    cubeStone = cubeDrawingAtlasAddCube(cda, makeBlockDrawingKind1(squareStone));
 }
 
 
@@ -38,6 +41,8 @@ int main() {
     // Zero-initialize the whole game state
     state = (FaceCraft*) malloc(sizeof(*state));
     memset(state, 0, sizeof(*state));
+
+    state->cubeSize = 1;
 
     float lookXSpeed = 0.1f;
     float lookYSpeed = 0.1f;
@@ -61,12 +66,25 @@ int main() {
     blocksSetBlockAt(&state->daBlocks, makeBlockPosition(1,1,1), cubeGrass);
     blocksSetBlockAt(&state->daBlocks, makeBlockPosition(1,5,1), cubeGrass);
     blocksSetBlockAt(&state->daBlocks, makeBlockPosition(2,1,2), cubeDirt);
+    blocksSetBlockAt(&state->daBlocks, makeBlockPosition(3,1,2), cubeGrass2);
+    for (int x = -10; x < -2; x++) {
+        blocksSetBlockAt(&state->daBlocks, makeBlockPosition(x,1,2), cubeStone);
+    }
 
-    // Prepare to enter game loop
+    // Grab cursor for 3D looking around
     DisableCursor();
 
     // Main game loop
     while (!WindowShouldClose()) {
+
+        if (IsKeyPressed(KEY_SPACE)) {
+            if (state->cubeSize < 1) {
+                state->cubeSize = 1;
+            }
+            else {
+                state->cubeSize = 0.8f;
+            }
+        }
 
         // Do camera movement update
         UpdateCameraPro(&state->cam,
@@ -94,8 +112,7 @@ int main() {
                 for (int i = 0; i < arrlen(state->daBlocks); ++i) {
                     BlockPair bp = state->daBlocks[i];
                     Vector3 centerPos = mapBlockPositionToVector3(bp.pos);
-                    float size = 0.95f;
-                    drawBlockKindAt(&state->cubeDrawAtlas, bp.blockDrawingKindIndex, centerPos, size, WHITE, -1);
+                    drawBlockKindAt(&state->cubeDrawAtlas, bp.blockDrawingKindIndex, centerPos, state->cubeSize, WHITE, -1);
                 }
             }
             EndMode3D();
