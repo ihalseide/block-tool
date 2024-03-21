@@ -52,13 +52,19 @@ typedef struct UVPair {
     float u2, v2; // stop/end
 } UVPair;
 
+// Element type for a `hmap` of `int` -> `BlockDrawingKind`.
+typedef struct BDKEntry {
+    int key;
+    BlockDrawingKind value;
+} BDKEntry;
+
 // Atlas that uses an array of cube faces that index into its array of UVPair's
 typedef struct CubeDrawingAtlas {
     Texture2D texture; // texture/image that all of the cube and square members refer to
     int numColumns; // texture grid columns
     int numRows; // texture grid rows
-    UVPair *daSquareUVs; // dynamic array
-    BlockDrawingKind *daCubeKinds; // dynamic array
+    UVPair *daSquareUVs; // dynamic array of `UVPair`
+    BDKEntry *hmCubeKinds; // hmap of `int` -> `BlockDrawingKind`
 } CubeDrawingAtlas;
 
 // Struct for all of the main program state.
@@ -68,5 +74,14 @@ typedef struct FaceCraft {
     BlockPair *daBlocks; // dynamic array of `BlockPair`s
 } FaceCraft;
 
+typedef enum BlockID {
+    BLOCK_GRASS,
+    BLOCK_GRASSY_DIRT,
+    BLOCK_DIRT,
+    BLOCK_STONE,
+    BLOCK_CRUMBLE,
+    BLOCK_WOOD,
+    BLOCK_LOG,
+} BlockID;
 
 #endif // _FACECRAFT_TYPES_H_INCLUDED_

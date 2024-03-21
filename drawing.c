@@ -8,12 +8,13 @@
 #include "raylib/rlgl.h"
 
 
-void drawBlockKindAt(const CubeDrawingAtlas *cda, int kindIndex, Vector3 centerPos, float size, Color color, long facesFlags) {
-    if (!BETWEEN(kindIndex, 0, arrlen(cda->daCubeKinds) - 1)) {
+void drawBlockKindAt(CubeDrawingAtlas *cda, int kindIndex, Vector3 centerPos, float size, Color color, long facesFlags) {
+    int i = hmgeti(cda->hmCubeKinds, kindIndex);
+    if (i < 0) {
         // `kindIndex` is out of range
         return;
     }
-    BlockDrawingKind blockKind = cda->daCubeKinds[kindIndex];
+    BlockDrawingKind blockKind = cda->hmCubeKinds[i].value;
 
     int maxSquareIndex = arrlen(cda->daSquareUVs) - 1;
 

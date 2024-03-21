@@ -18,9 +18,6 @@
 static FaceCraft *state;
 
 
-int cubeGrass, cubeDirt, cubeGrass2, cubeStone;
-
-
 void initCubeDrawingAtlas(Texture2D texture) {
     CubeDrawingAtlas *cda = &state->cubeDrawAtlas;
     *cda = makeCubeDrawingAtlas16(texture);
@@ -29,11 +26,9 @@ void initCubeDrawingAtlas(Texture2D texture) {
     int squareGrass = cubeDrawingAtlasAddSquareFromIndex(cda, 4);
     int squareDirt = cubeDrawingAtlasAddSquareFromIndex(cda, 2);
     int squareStone = cubeDrawingAtlasAddSquareFromIndex(cda, 1);
-
-    cubeGrass = cubeDrawingAtlasAddCube(cda, makeBlockDrawingKind3(squareGrassSide, squareGrass, squareDirt));
-    cubeDirt = cubeDrawingAtlasAddCube(cda, makeBlockDrawingKind1(squareDirt));
-    cubeGrass2 = cubeDrawingAtlasAddCube(cda, makeBlockDrawingKind1(squareGrass));
-    cubeStone = cubeDrawingAtlasAddCube(cda, makeBlockDrawingKind1(squareStone));
+    int squareTntTop = cubeDrawingAtlasAddSquareFromIndex(cda, 10);
+    int squareTntSide = cubeDrawingAtlasAddSquareFromIndex(cda, 9);
+    int squareTntBottom = cubeDrawingAtlasAddSquareFromIndex(cda, 11);
 }
 
 
@@ -63,13 +58,6 @@ int main() {
     state->cam.projection = CAMERA_PERSPECTIVE;
 
     // Place some blocks
-    blocksSetBlockAt(&state->daBlocks, makeBlockPosition(1,1,1), cubeGrass);
-    blocksSetBlockAt(&state->daBlocks, makeBlockPosition(1,5,1), cubeGrass);
-    blocksSetBlockAt(&state->daBlocks, makeBlockPosition(2,1,2), cubeDirt);
-    blocksSetBlockAt(&state->daBlocks, makeBlockPosition(3,1,2), cubeGrass2);
-    for (int x = -10; x < -2; x++) {
-        blocksSetBlockAt(&state->daBlocks, makeBlockPosition(x,1,2), cubeStone);
-    }
 
     // Grab cursor for 3D looking around
     DisableCursor();

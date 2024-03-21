@@ -44,6 +44,8 @@ static int cubeDrawingAtlasAddUVSquare(CubeDrawingAtlas *cda, UVPair square) {
 
 CubeDrawingAtlas makeCubeDrawingAtlas(Texture2D texture, int numRows, int numColumns) {
     CubeDrawingAtlas result = (CubeDrawingAtlas) { 0 };
+    result.hmCubeKinds = NULL;
+    result.daSquareUVs = NULL;
     result.texture = texture;
     result.numRows = numRows;
     result.numColumns = numColumns;
@@ -57,8 +59,8 @@ CubeDrawingAtlas makeCubeDrawingAtlas16(Texture2D texture) {
 }
 
 void freeCubeDrawingAtlas(CubeDrawingAtlas cda) {
-    free(cda.daCubeKinds);
-    free(cda.daSquareUVs);
+    hmfree(cda.hmCubeKinds);
+    arrfree(cda.daSquareUVs);
 }
 
 int cubeDrawingAtlasAddSquareFromRowCol(CubeDrawingAtlas *cda, int row, int col) {
@@ -71,8 +73,6 @@ int cubeDrawingAtlasAddSquareFromIndex(CubeDrawingAtlas *cda, int index) {
         makeUVPairFromGridIndex(index, cda->numRows, cda->numColumns));
 }
 
-int cubeDrawingAtlasAddCube(CubeDrawingAtlas *cda, BlockDrawingKind cube) {
-    int resultIndex = arrlen(cda->daCubeKinds);
-    arrput(cda->daCubeKinds, cube);
-    return resultIndex;
+void cubeDrawingAtlasAddCube(CubeDrawingAtlas *cda, int key, BlockDrawingKind cube) {
+    hmput(cda->hmCubeKinds, key, cube);
 }

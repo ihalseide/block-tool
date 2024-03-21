@@ -9,7 +9,7 @@
 
 // Draw a block kind at a given position, and only draw the faces given by `facesFlags`.
 // For example, the `facesFlags` for back & top would be: `(1 << CUBE_DIRECTION_BACK) | (1 << CUBE_DIRECTION_TOP)`.
-void drawBlockKindAt(const CubeDrawingAtlas *cda, int kindIndex, Vector3 centerPos, float size, Color color, long facesFlags);
+void drawBlockKindAt(CubeDrawingAtlas *cda, int kindIndex, Vector3 centerPos, float size, Color color, long facesFlags);
 
 // Draw cube face textured
 void drawCubeFaceTexture(Texture2D texture, UVPair uvPair, Vector3 centerPos, float size, Color color, CubeDirection faceSide);

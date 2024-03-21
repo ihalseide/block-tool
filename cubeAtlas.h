@@ -22,7 +22,7 @@ int cubeDrawingAtlasAddSquareFromRowCol(CubeDrawingAtlas *cda, int row, int col)
 // Add a UVPair square to the atlas and return the index of it in the internal square array.
 int cubeDrawingAtlasAddSquareFromIndex(CubeDrawingAtlas *cda, int index);
 
-// Add a BlockDrawingKind cube to the atlas and return the index of it in the interal cube array.
-int cubeDrawingAtlasAddCube(CubeDrawingAtlas *cda, BlockDrawingKind cube);
+// Add a BlockDrawingKind cube to the atlas B.D.K. hashmap
+void cubeDrawingAtlasAddCube(CubeDrawingAtlas *cda, int key, BlockDrawingKind cube);
 
 #endif // _FACECRAFT_CUBEATLAS_H_DEFINED_
