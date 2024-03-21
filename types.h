@@ -18,56 +18,51 @@ typedef enum CubeDirection {
     CUBE_DIRECTION_BACK,
 } CubeDirection;
 
-typedef struct BlockFaces {
-    // indices into an array of texture UVs for each face
-    int topIndex;
-    int bottomIndex;
-    int frontIndex;
-    int backIndex;
-    int leftIndex;
-    int rightIndex;
-} BlockFaces;
+// Collection of indices into a TextureAtlasGrid for the 6 faces of a cube.
+typedef struct CubeFaces {
+    int topIndex,
+        bottomIndex,
+        frontIndex,
+        backIndex,
+        leftIndex,
+        rightIndex;
+} CubeFaces;
 
-typedef struct BlockKind {
-    Texture2D texture;
-    BlockFaces faces;
-} BlockKind;
+// Collection of the properties for a kind of block for rendering.
+typedef struct BlockDrawingKind {
+    CubeFaces faces;
+} BlockDrawingKind;
 
+// A 3D block position.
 typedef struct BlockPosition {
     int x, y, z;
 } BlockPosition;
 
+// A pair of a block position and a index into an array of BlockDrawingKind's
 typedef struct BlockPair {
     BlockPosition pos;
     int kindIndex;
 } BlockPair;
-
-typedef struct Blocks {
-    BlockPair *da_start;
-} Blocks;
-
-typedef struct BlockKinds {
-    BlockKind *da_start;
-} BlockKinds;
-
-typedef struct BlockMap {
-    BlockKinds blockKinds;
-    Blocks blocks;
-} BlockMap;
 
 typedef struct UVPair {
     float u1, v1; // start/begin
     float u2, v2; // stop/end
 } UVPair;
 
-typedef struct AtlasUVs {
-    UVPair *da_start;
-} AtlasUVs;
+// Atlas that uses an array of cube faces that index into its TextureAtlasGrid's list of UVPair's
+typedef struct CubeDrawingAtlas {
+    Texture2D texture;
+    int numColumns; // texture grid columns
+    int numRows; // texture grid rows
+    UVPair *daSquareUVs; // dynamic array
+    BlockDrawingKind *daCubeKinds; // dynamic array
+} CubeDrawingAtlas;
 
+// Struct for all of the main program state.
 typedef struct FaceCraft {
+    CubeDrawingAtlas cubeDrawAtlas;
     Camera cam;
-    BlockMap map;
-    AtlasUVs blockTextureUVs;
+    BlockPair *daBlocks; // dynamic array of `BlockPair`s
 } FaceCraft;
 
 

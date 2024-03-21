@@ -20,80 +20,36 @@ bool blockPositionEqual(BlockPosition a, BlockPosition b) {
     return (a.x == b.x) && (a.y == b.y) && (a.z == b.z);
 }
 
-bool isValidBlockKind(BlockKinds blockKinds, int blockKindIndex) {
-    const BlockKind *da = blockKinds.da_start;
-    int maxIndex = arrlen(da) - 1;
-    return BETWEEN(blockKindIndex, 0, maxIndex);
-}
-
-BlockPair *mapGetBlockPointer(BlockMap *blockMap, BlockPosition blockPos) {
-    for (int i = 0; i < arrlen(blockMap->blocks.da_start); i++) {
-        BlockPair *b = &blockMap->blocks.da_start[i];
-        if (blockPositionEqual(b->pos, blockPos)) {
-            return b;
+int blocksGetIndexOfBlockAt(BlockPair *daBlocks, BlockPosition blockPos) {
+    for (int i = 0; i < arrlen(daBlocks); i++) {
+        if (blockPositionEqual(daBlocks[i].pos, blockPos)) {
+            return i;
         }
     }
-    return NULL;
+    return -1;
 }
 
-const BlockPair *mapGetBlockPointer_const(const BlockMap *blockMap, BlockPosition blockPos) {
-    for (int i = 0; i < arrlen(blockMap->blocks.da_start); i++) {
-        const BlockPair *b = &blockMap->blocks.da_start[i];
-        if (blockPositionEqual(b->pos, blockPos)) {
-            return b;
-        }
-    }
-    return NULL;
-}
-
-void mapSetBlock(BlockMap *blockMap, BlockPosition blockPos, int blockKindIndex) {
-    if (!isValidBlockKind(blockMap->blockKinds, blockKindIndex)) {
-        return;
-    }
-    BlockPair *foundBlock = mapGetBlockPointer(blockMap, blockPos);
-    if (foundBlock) {
-        // Block at given position already exists, so overwrite it.
-        foundBlock->kindIndex = blockKindIndex;
+// Set a block position to be a certain block kind within the map.
+void blocksSetBlockAt(BlockPair **daBlocksPtr, BlockPosition blockPos, int blockKindIndex) {
+    BlockPair *daBlocks = *daBlocksPtr;
+    int index = blocksGetIndexOfBlockAt(daBlocks, blockPos);
+    if (index >= 0) {
+        // Block record already found, so update it.
+        daBlocks[index].kindIndex = blockKindIndex;
     }
     else {
-        // Block at given position does not yet exist, so create it.
-        BlockPair newBlock = (BlockPair) { .kindIndex=blockKindIndex, .pos=blockPos };
-        arrput(blockMap->blocks.da_start, newBlock);
+        // Block record not found, so add it.
+        BlockPair newBlock = (BlockPair){0};
+        newBlock.kindIndex = blockKindIndex;
+        newBlock.pos = blockPos;
+        arrput(daBlocks, newBlock);
     }
+    // Pointer may have changed, so update it for the caller
+    *daBlocksPtr = daBlocks;
 }
 
-int mapGetBlockKindIndex(const BlockMap *blockMap, BlockPosition blockPos, int notFound) {
-    const BlockPair *b = mapGetBlockPointer_const(blockMap, blockPos);
-    if (b) {
-        return b->kindIndex;
-    }
-    else {
-        return notFound;
-    }
-}
-
-void mapAddBlockKind(BlockMap *blockMap, BlockKind blockKind) {
-    arrput(blockMap->blockKinds.da_start, blockKind);
-}
-
-const BlockKind *mapGetBlockKindAtPosition(const BlockMap *blockMap, BlockPosition blockPos) {
-    const BlockPair *bp = mapGetBlockPointer_const(blockMap, blockPos);
-    if (bp) {
-        // There is a block at the given position.
-        int kind = bp->kindIndex;
-        assert(isValidBlockKind(blockMap->blockKinds, kind));
-        const BlockKind *result = &blockMap->blockKinds.da_start[kind];
-        return result;
-    }
-    else {
-        // No block at the given position, so return NULL.
-        return NULL;
-    }
-}
-
-BlockKind makeBlockKind(int allFacesInitialIndex, Texture2D texture) {
-    BlockKind result = (BlockKind) { 0 };
-    result.texture = texture;
+BlockDrawingKind makeBlockKind(int allFacesInitialIndex) {
+    BlockDrawingKind result = (BlockDrawingKind) { 0 };
     result.faces.topIndex = allFacesInitialIndex;
     result.faces.bottomIndex = allFacesInitialIndex;
     result.faces.frontIndex = allFacesInitialIndex;
@@ -103,7 +59,7 @@ BlockKind makeBlockKind(int allFacesInitialIndex, Texture2D texture) {
     return result;
 }
 
-int blockFacesGetByDirection(BlockFaces faces, CubeDirection d) {
+int blockFacesGetByDirection(CubeFaces faces, CubeDirection d) {
     switch (d)
     {
     case CUBE_DIRECTION_TOP: return faces.topIndex;

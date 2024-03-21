@@ -8,14 +8,25 @@
 #include "raylib/rlgl.h"
 
 
-void drawBlockKindAt(const AtlasUVs *textureUVs, BlockKind blockKind, Vector3 centerPos, float size, Color color, long facesFlags) {
-    const int max_i = arrlen(textureUVs->da_start);
+void drawBlockKindAt(const CubeDrawingAtlas *cda, int kindIndex, Vector3 centerPos, float size, Color color, long facesFlags) {
+    if (!BETWEEN(kindIndex, 0, arrlen(cda->daCubeKinds) - 1)) {
+        // `kindIndex` is out of range
+        return;
+    }
+    BlockDrawingKind blockKind = cda->daCubeKinds[kindIndex];
+
+    int maxSquareIndex = arrlen(cda->daSquareUVs) - 1;
+
     for (CubeDirection dir = 0; dir < 6; dir++) {
+        // Iterate the faces and draw the ones that are in the `facesFlags`
         if (facesFlags & (1 << dir)) {
-            int lookupIndex = blockFacesGetByDirection(blockKind.faces, dir);
-            assert(BETWEEN(lookupIndex, 0, max_i));
-            UVPair uvPair = textureUVs->da_start[lookupIndex];
-            drawCubeFaceTexture(blockKind.texture, uvPair, centerPos, size, color, dir);
+            int squareIndex = blockFacesGetByDirection(blockKind.faces, dir);
+            if (!BETWEEN(squareIndex, 0, maxSquareIndex)) {
+                // `squareIndex` is out of range
+                continue;
+            }
+            UVPair uvPair = cda->daSquareUVs[squareIndex];
+            drawCubeFaceTexture(cda->texture, uvPair, centerPos, size, color, dir);
         }
     }
 }

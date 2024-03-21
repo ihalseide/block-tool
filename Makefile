@@ -13,7 +13,7 @@ clean:
 	rm -rf *.o
 	# cd raylib/src && make clean # recursively clean raylib
 
-facecraft: main.o blocks.o drawing.o raylib/libraylib.a
+facecraft: main.o blocks.o drawing.o cubeAtlas.o raylib/libraylib.a
 	$(CC) $(CFLAGS) -o $@ $^ $(LL)
 
 raylib/libraylib.a:

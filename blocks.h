@@ -8,40 +8,25 @@
 BlockPosition makeBlockPosition(int x, int y, int z);
 
 // Create a new BlockKind data value with an initial index that is the same for all of the faces.
-BlockKind makeBlockKind(int allFacesInitialIndex, Texture2D texture);
+BlockDrawingKind makeBlockKind(int allFacesInitialIndex);
 
 // Check if 2 Block Positions are equal
 bool blockPositionEqual(BlockPosition a, BlockPosition b);
 
-// Add or "register" a new block kind to the block map.
-// Returns the index/id of the new block kind, or the failValue if failed.
-void mapAddBlockKind(BlockMap *blockMap, BlockKind blockKind);
-
-// Check if a given blockKindIndex is valid (found inside the given blockKinds)
-bool isValidBlockKind(BlockKinds blockKinds, int blockKindIndex);
-
-// Get a pointer to a block in the map at the given position.
+// Get the index of a block in the map at the given block position.
+// Returns: index into `daBlocks` or -1 if not found.
 // NOTE: the position for the returned Block should NOT be modified!
-BlockPair *mapGetBlockPointer(BlockMap *blockMap, BlockPosition blockPos);
-
-// Get a const pointer to a block in the map at the given position.
-// (Is the `const` version of the `mapGetBlockPointer` function.)
-const BlockPair *mapGetBlockPointer_const(const BlockMap *blockMap, BlockPosition blockPos);
+int blocksGetIndexOfBlockAt(BlockPair *daBlocks, BlockPosition blockPos);
 
 // Set a block position to be a certain block kind within the map.
-void mapSetBlock(BlockMap *blockMap, BlockPosition blockPos, int blockKindIndex);
-
-// Get the integer kind index of the block found at the given Block Position, or return `notFound` if there is no block there.
-int mapGetBlockKindIndex(const BlockMap *blockMap, BlockPosition blockPos, int notFound);
-
-// Get the Block Kind information at a given block position.
-const BlockKind *mapGetBlockKindAtPosition(const BlockMap *blockMap, BlockPosition blockPos);
+// - `daBlocksPtr`: is a pointer to a dynamic array of BlockPairs.
+void blocksSetBlockAt(BlockPair **daBlocksPtr, BlockPosition blockPos, int blockKindIndex);
 
 // Map/convert from a `BlockPosition` to a `Vector3`
 Vector3 mapBlockPositionToVector3(BlockPosition blockPos);
 
 // Get the block face field corresponding to the cube direction.
-int blockFacesGetByDirection(BlockFaces faces, CubeDirection d);
+int blockFacesGetByDirection(CubeFaces faces, CubeDirection d);
 
 
 #endif //_FACECRAFT_BLOCKS_H_INCLUDED_
