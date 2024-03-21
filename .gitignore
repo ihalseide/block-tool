@@ -1,9 +1,5 @@
+raylib/
+.vscode/
 *.o
 facecraft
-
-raylib/
-
 texture.png
-
-c_cpp_properties.json
-settings.json
