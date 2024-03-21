@@ -42,7 +42,7 @@ int main() {
     state = (FaceCraft*) malloc(sizeof(*state));
     memset(state, 0, sizeof(*state));
 
-    state->cubeSize = 1;
+    float cubeSize = 1;
 
     float lookXSpeed = 0.1f;
     float lookYSpeed = 0.1f;
@@ -78,11 +78,11 @@ int main() {
     while (!WindowShouldClose()) {
 
         if (IsKeyPressed(KEY_SPACE)) {
-            if (state->cubeSize < 1) {
-                state->cubeSize = 1;
+            if (cubeSize < 1) {
+                cubeSize = 1;
             }
             else {
-                state->cubeSize = 0.8f;
+                cubeSize = 0.8f;
             }
         }
 
@@ -112,10 +112,19 @@ int main() {
                 for (int i = 0; i < arrlen(state->daBlocks); ++i) {
                     BlockPair bp = state->daBlocks[i];
                     Vector3 centerPos = mapBlockPositionToVector3(bp.pos);
-                    drawBlockKindAt(&state->cubeDrawAtlas, bp.blockDrawingKindIndex, centerPos, state->cubeSize, WHITE, -1);
+                    drawBlockKindAt(&state->cubeDrawAtlas, bp.blockDrawingKindIndex, centerPos, cubeSize, WHITE, -1);
                 }
             }
             EndMode3D();
+
+            // Draw center crosshairs
+            Color crossColor = WHITE;
+            int crossSize = 10;
+            int centerX = GetScreenWidth()/2;
+            int centerY = GetScreenHeight()/2;
+            DrawLine(centerX-crossSize, centerY, centerX+crossSize, centerY, crossColor);
+            DrawLine(centerX, centerY-crossSize, centerX, centerY+crossSize, crossColor);
+
             DrawText(TextFormat("Position: (%06.3f, %06.3f, %06.3f)",
                 state->cam.position.x, state->cam.position.y, state->cam.position.z),
                 610, 60, 10, BLACK);
