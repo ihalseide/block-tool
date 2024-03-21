@@ -29,6 +29,8 @@ void initCubeDrawingAtlas(Texture2D texture) {
     int squareTntTop = cubeDrawingAtlasAddSquareFromIndex(cda, 10);
     int squareTntSide = cubeDrawingAtlasAddSquareFromIndex(cda, 9);
     int squareTntBottom = cubeDrawingAtlasAddSquareFromIndex(cda, 11);
+
+    cubeDrawingAtlasAddCube(cda, BLOCK_DIRT, makeBlockDrawingKind1(squareDirt));
 }
 
 
@@ -58,6 +60,7 @@ int main() {
     state->cam.projection = CAMERA_PERSPECTIVE;
 
     // Place some blocks
+    blocksSetBlockAtXYZ(&state->daBlocks, 1, 1, 1, BLOCK_DIRT);
 
     // Grab cursor for 3D looking around
     DisableCursor();
