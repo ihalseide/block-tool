@@ -29,8 +29,18 @@ void initCubeDrawingAtlas(Texture2D texture) {
     int squareTntTop = cubeDrawingAtlasAddSquareFromIndex(cda, 10);
     int squareTntSide = cubeDrawingAtlasAddSquareFromIndex(cda, 9);
     int squareTntBottom = cubeDrawingAtlasAddSquareFromIndex(cda, 11);
+    int squareCrumble = cubeDrawingAtlasAddSquareFromRowCol(cda, 1, 0);
+    int squareWood = cubeDrawingAtlasAddSquareFromRowCol(cda, 0, 5);
+    int squareLogSide = cubeDrawingAtlasAddSquareFromRowCol(cda, 1, 4);
+    int squareLogTop = cubeDrawingAtlasAddSquareFromRowCol(cda, 1, 5);
 
     cubeDrawingAtlasAddCube(cda, BLOCK_DIRT, makeBlockDrawingKind1(squareDirt));
+    cubeDrawingAtlasAddCube(cda, BLOCK_GRASS, makeBlockDrawingKind1(squareGrass));
+    cubeDrawingAtlasAddCube(cda, BLOCK_GRASSY_DIRT, makeBlockDrawingKind3(squareGrassSide, squareGrass, squareDirt));
+    cubeDrawingAtlasAddCube(cda, BLOCK_STONE, makeBlockDrawingKind1(squareStone));
+    cubeDrawingAtlasAddCube(cda, BLOCK_CRUMBLE, makeBlockDrawingKind1(squareCrumble));
+    cubeDrawingAtlasAddCube(cda, BLOCK_WOOD, makeBlockDrawingKind1(squareWood));
+    cubeDrawingAtlasAddCube(cda, BLOCK_LOG, makeBlockDrawingKind2(squareLogSide, squareLogTop));
 }
 
 
@@ -60,7 +70,9 @@ int main() {
     state->cam.projection = CAMERA_PERSPECTIVE;
 
     // Place some blocks
-    blocksSetBlockAtXYZ(&state->daBlocks, 1, 1, 1, BLOCK_DIRT);
+    for (int x = 0; x < 7; x++) {
+        blocksSetBlockAtXYZ(&state->daBlocks, x*1, 1, 1, x);
+    }
 
     // Grab cursor for 3D looking around
     DisableCursor();
