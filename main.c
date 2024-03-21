@@ -116,6 +116,14 @@ int main() {
     for (int x = 0; x < BLOCK_COUNT_; x++) {
         blocksSetBlockAtXYZ(&state->daBlocks, x, 1, 1, x);
     }
+    {
+        int squareBounds = 15;
+        for (int x = -squareBounds; x <= squareBounds; x++) {
+            for (int z = -squareBounds; z <= squareBounds; z++) {
+                blocksSetBlockAtXYZ(&state->daBlocks, x, 0, z, BLOCK_GRASSY_DIRT);
+            }
+        }
+    }
 
     // Grab cursor for 3D looking around
     DisableCursor();
@@ -176,17 +184,15 @@ int main() {
             ClearBackground(SKYBLUE);
             BeginMode3D(state->cam);
             {
-                DrawPlane((Vector3){ 0.0f, 0.0f, 0.0f }, (Vector2){ 32.0f, 32.0f }, BROWN);
-                DrawCube((Vector3){ 16.0f, 2.5f, 0.0f }, 1.0f, 5.0f, 32.0f, LIGHTGRAY);
-
+                // Draw blocks
                 for (int i = 0; i < arrlen(state->daBlocks); ++i) {
                     BlockPair bp = state->daBlocks[i];
                     Vector3 centerPos = mapBlockPositionToVector3(bp.pos);
                     drawBlockKindAt(&state->cubeDrawAtlas, bp.blockDrawingKindIndex, centerPos, cubeSize, WHITE, -1);
                 }
 
-                if (isSelectingBlock)
-                {
+                // Draw block wireframe
+                if (isSelectingBlock) {
                     Color color1 = WHITE;
                     color1.a /= 2;
                     DrawCubeWires(mapBlockPositionToVector3(selectedBlockPosition), 1.01f, 1.01f, 1.01f, color1);
@@ -202,7 +208,7 @@ int main() {
             DrawLine(centerX-crossSize, centerY, centerX+crossSize, centerY, crossColor);
             DrawLine(centerX, centerY-crossSize, centerX, centerY+crossSize, crossColor);
 
-            // Draw position
+            // Draw position text
             Camera *c = &state->cam;
             DrawText(TextFormat("Position: (%06.3f, %06.3f, %06.3f)\nLooking at: (%06.3f, %06.3f, %06.3f)",
                 c->position.x, c->position.y, c->position.z,
