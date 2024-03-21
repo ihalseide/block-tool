@@ -35,6 +35,9 @@ void blocksSetBlockAt(BlockPair **daBlocksPtr, BlockPosition blockPos, int block
 // - `daBlocksPtr`: is a pointer to a dynamic array of BlockPairs.
 void blocksSetBlockAtXYZ(BlockPair **daBlocksPtr, int x, int y, int z, int blockKindIndex);
 
+// Delete/remove the block (if any) at the given position.
+void blocksDeleteBlockAt(BlockPair **daBlocksPtr, BlockPosition blockPos);
+
 // Map/convert from a `BlockPosition` to a `Vector3`
 Vector3 mapBlockPositionToVector3(BlockPosition blockPos);
 

@@ -33,6 +33,15 @@ void blocksSetBlockAtXYZ(BlockPair **daBlocksPtr, int x, int y, int z, int block
     blocksSetBlockAt(daBlocksPtr, makeBlockPosition(x, y, z), blockKindIndex);
 }
 
+void blocksDeleteBlockAt(BlockPair **daBlocksPtr, BlockPosition blockPos) {
+    BlockPair *daBlocks = *daBlocksPtr;
+    int i = blocksGetIndexOfBlockAt(daBlocks, blockPos);
+    if (i >= 0) {
+        arrdelswap(daBlocks, i);
+    }
+    *daBlocksPtr = daBlocks;
+}
+
 // Set a block position to be a certain block kind within the map.
 void blocksSetBlockAt(BlockPair **daBlocksPtr, BlockPosition blockPos, int blockKindIndex) {
     BlockPair *daBlocks = *daBlocksPtr;

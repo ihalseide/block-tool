@@ -1,3 +1,5 @@
+// Functions for working with the `CubeDrawingAtlas` data structure.
+
 #include <assert.h>
 
 #include "stb_ds.h"

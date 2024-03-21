@@ -2,6 +2,7 @@
 
 // raylib
 #include "raylib/raylib.h"
+#include "raylib/raymath.h"
 
 // Data structure types
 #define STB_DS_IMPLEMENTATION
@@ -18,6 +19,7 @@
 static FaceCraft *state;
 
 
+// Initialize the drawing data for each cube/block kind.
 void initCubeDrawingAtlas(Texture2D texture) {
     CubeDrawingAtlas *cda = &state->cubeDrawAtlas;
     *cda = makeCubeDrawingAtlas16(texture);
@@ -49,6 +51,40 @@ void initCubeDrawingAtlas(Texture2D texture) {
     cubeDrawingAtlasAddCube(cda, BLOCK_GOLD, makeBlockDrawingKind3(squareGoldSide, squareGoldTop, squareGoldBottom));
 }
 
+// Return a `RayCollision` and write the `BlockPosition` of the hit to the pointer argument `blockPosResult` if a hit was found.
+RayCollision rayCollisionBlocks(BlockPosition *blockPosResult) {
+    Ray ray;
+    ray.position = state->cam.position;
+    ray.direction = Vector3Normalize(Vector3Subtract(state->cam.target, state->cam.position));
+
+    RayCollision best = (RayCollision){0};
+    best.hit = false;
+    best.distance = INFINITY;
+
+    BlockPosition blockHit;
+
+    for (int i = 0; i < arrlen(state->daBlocks); i++) {
+        BlockPair bp = state->daBlocks[i];
+        BoundingBox blockBox;
+        blockBox.min.x = bp.pos.x - 0.5f;
+        blockBox.min.y = bp.pos.y - 0.5f;
+        blockBox.min.z = bp.pos.z - 0.5f;
+        blockBox.max.x = bp.pos.x + 0.5f;
+        blockBox.max.y = bp.pos.y + 0.5f;
+        blockBox.max.z = bp.pos.z + 0.5f;
+        RayCollision rc = GetRayCollisionBox(ray, blockBox);
+        if (rc.hit && rc.distance < best.distance) {
+            best = rc;
+            blockHit = bp.pos;
+        }
+    }
+
+    if (best.hit) {
+        *blockPosResult = blockHit;
+    }
+
+    return best;
+}
 
 int main() {
     // Zero-initialize the whole game state
@@ -60,10 +96,11 @@ int main() {
     float lookXSpeed = 0.1f;
     float lookYSpeed = 0.1f;
 
+    BlockPosition selectedBlockPosition;
+    bool isSelectingBlock = false;
+
     // Initialize window and drawing
-    const int screenWidth = 800;
-    const int screenHeight = 450;
-    InitWindow(screenWidth, screenHeight, "FaceCraft");
+    InitWindow(820, 540, "Cube Tool");
     SetTargetFPS(60);
 
     initCubeDrawingAtlas(LoadTexture("texture.png"));
@@ -95,6 +132,29 @@ int main() {
             }
         }
 
+        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+            // block breaking
+            isSelectingBlock = false;
+            RayCollision rc = rayCollisionBlocks(&selectedBlockPosition);
+            if (rc.hit) {
+                isSelectingBlock = true;
+                blocksDeleteBlockAt(&state->daBlocks, selectedBlockPosition);
+            }
+        }
+        else if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
+            // block placement
+            isSelectingBlock = false;
+            RayCollision rc = rayCollisionBlocks(&selectedBlockPosition);
+            if (rc.hit && rc.distance > 1.7f) {// this distance condition is a bad heuristic to prevent player from placing blocks on himself
+                selectedBlockPosition.x += rc.normal.x;
+                selectedBlockPosition.y += rc.normal.y;
+                selectedBlockPosition.z += rc.normal.z;
+                if (blocksGetIndexOfBlockAt(state->daBlocks, selectedBlockPosition) < 0) {
+                    blocksSetBlockAt(&state->daBlocks, selectedBlockPosition, BLOCK_CRUMBLE);
+                }
+            }
+        }
+
         // Do camera movement update
         UpdateCameraPro(&state->cam,
             (Vector3){
@@ -118,10 +178,18 @@ int main() {
             {
                 DrawPlane((Vector3){ 0.0f, 0.0f, 0.0f }, (Vector2){ 32.0f, 32.0f }, BROWN);
                 DrawCube((Vector3){ 16.0f, 2.5f, 0.0f }, 1.0f, 5.0f, 32.0f, LIGHTGRAY);
+
                 for (int i = 0; i < arrlen(state->daBlocks); ++i) {
                     BlockPair bp = state->daBlocks[i];
                     Vector3 centerPos = mapBlockPositionToVector3(bp.pos);
                     drawBlockKindAt(&state->cubeDrawAtlas, bp.blockDrawingKindIndex, centerPos, cubeSize, WHITE, -1);
+                }
+
+                if (isSelectingBlock)
+                {
+                    Color color1 = WHITE;
+                    color1.a /= 2;
+                    DrawCubeWires(mapBlockPositionToVector3(selectedBlockPosition), 1.01f, 1.01f, 1.01f, color1);
                 }
             }
             EndMode3D();
@@ -134,9 +202,12 @@ int main() {
             DrawLine(centerX-crossSize, centerY, centerX+crossSize, centerY, crossColor);
             DrawLine(centerX, centerY-crossSize, centerX, centerY+crossSize, crossColor);
 
-            DrawText(TextFormat("Position: (%06.3f, %06.3f, %06.3f)",
-                state->cam.position.x, state->cam.position.y, state->cam.position.z),
-                610, 60, 10, BLACK);
+            // Draw position
+            Camera *c = &state->cam;
+            DrawText(TextFormat("Position: (%06.3f, %06.3f, %06.3f)\nLooking at: (%06.3f, %06.3f, %06.3f)",
+                c->position.x, c->position.y, c->position.z,
+                c->target.x, c->target.y, c->target.z),
+                10, 10, 10, WHITE);
         }
         EndDrawing();
     }
