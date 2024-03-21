@@ -41,7 +41,7 @@ typedef struct BlockPosition {
 // A pair of a block position and a index into an array of BlockDrawingKind's
 typedef struct BlockPair {
     BlockPosition pos;
-    int kindIndex;
+    int blockDrawingKindIndex;
 } BlockPair;
 
 typedef struct UVPair {

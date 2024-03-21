@@ -39,21 +39,16 @@ int main() {
     state->cam.fovy = 70.0f;
     state->cam.projection = CAMERA_PERSPECTIVE;
 
-    Image img = LoadImage("texture.png");
-    //ImageFlipVertical(&img);
-    Texture2D tex = LoadTextureFromImage(img);
+    // Init blocks atlas
+    state->cubeDrawAtlas = makeCubeDrawingAtlas16(LoadTexture("texture.png"));
+    BlockDrawingKind grassBlock = makeBlockDrawingKind1(cubeDrawingAtlasAddSquareFromIndex(&state->cubeDrawAtlas, 0));
+    grassBlock.faces.topIndex = cubeDrawingAtlasAddSquareFromIndex(&state->cubeDrawAtlas, 1);
+    grassBlock.faces.bottomIndex = cubeDrawingAtlasAddSquareFromIndex(&state->cubeDrawAtlas, 2);
+    int grassDrawId = cubeDrawingAtlasAddCube(&state->cubeDrawAtlas, grassBlock);
 
-    // Init blocks
-    state->cubeDrawAtlas = makeCubeDrawingAtlas(tex, 2, 2);
-    int grassBottom = cubeDrawingAtlasAddSquare(&state->cubeDrawAtlas, 0, 1);
-    int grassSide = cubeDrawingAtlasAddSquare(&state->cubeDrawAtlas, 1, 0);
-    int grassTop = cubeDrawingAtlasAddSquare(&state->cubeDrawAtlas, 1, 1);
-    BlockDrawingKind grassBlock = makeBlockKind(grassSide);
-    grassBlock.faces.topIndex = grassTop;
-    grassBlock.faces.bottomIndex = grassBottom;
-    int grassId = cubeDrawingAtlasAddCube(&state->cubeDrawAtlas, grassBlock);
-
-    blocksSetBlockAt(&state->daBlocks, makeBlockPosition(1,1,1), grassId);
+    // Place some blocks
+    blocksSetBlockAt(&state->daBlocks, makeBlockPosition(1,1,1), grassDrawId);
+    blocksSetBlockAt(&state->daBlocks, makeBlockPosition(1,5,1), grassDrawId);
 
     // Prepare to enter game loop
     DisableCursor();
@@ -88,7 +83,7 @@ int main() {
                     BlockPair bp = state->daBlocks[i];
                     Vector3 centerPos = mapBlockPositionToVector3(bp.pos);
                     float size = 0.95f;
-                    drawBlockKindAt(&state->cubeDrawAtlas, bp.kindIndex, centerPos, size, WHITE, -1);
+                    drawBlockKindAt(&state->cubeDrawAtlas, bp.blockDrawingKindIndex, centerPos, size, WHITE, -1);
                 }
             }
             EndMode3D();

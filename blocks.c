@@ -35,12 +35,12 @@ void blocksSetBlockAt(BlockPair **daBlocksPtr, BlockPosition blockPos, int block
     int index = blocksGetIndexOfBlockAt(daBlocks, blockPos);
     if (index >= 0) {
         // Block record already found, so update it.
-        daBlocks[index].kindIndex = blockKindIndex;
+        daBlocks[index].blockDrawingKindIndex = blockKindIndex;
     }
     else {
         // Block record not found, so add it.
         BlockPair newBlock = (BlockPair){0};
-        newBlock.kindIndex = blockKindIndex;
+        newBlock.blockDrawingKindIndex = blockKindIndex;
         newBlock.pos = blockPos;
         arrput(daBlocks, newBlock);
     }
@@ -48,14 +48,25 @@ void blocksSetBlockAt(BlockPair **daBlocksPtr, BlockPosition blockPos, int block
     *daBlocksPtr = daBlocks;
 }
 
-BlockDrawingKind makeBlockKind(int allFacesInitialIndex) {
+BlockDrawingKind makeBlockDrawingKind1(int allFacesInitialIndex) {
     BlockDrawingKind result = (BlockDrawingKind) { 0 };
     result.faces.topIndex = allFacesInitialIndex;
     result.faces.bottomIndex = allFacesInitialIndex;
+    result.faces.rightIndex = allFacesInitialIndex;
+    result.faces.leftIndex = allFacesInitialIndex;
     result.faces.frontIndex = allFacesInitialIndex;
     result.faces.backIndex = allFacesInitialIndex;
-    result.faces.leftIndex = allFacesInitialIndex;
-    result.faces.rightIndex = allFacesInitialIndex;
+    return result;
+}
+
+BlockDrawingKind makeBlockDrawingKind6(int top, int bottom, int left, int right, int front, int back) {
+    BlockDrawingKind result = (BlockDrawingKind) { 0 };
+    result.faces.topIndex = top;
+    result.faces.bottomIndex = bottom;
+    result.faces.rightIndex = right;
+    result.faces.leftIndex = left;
+    result.faces.frontIndex = front;
+    result.faces.backIndex = back;
     return result;
 }
 
