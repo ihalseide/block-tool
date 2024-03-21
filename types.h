@@ -29,6 +29,9 @@ typedef enum BlockID {
     BLOCK_CRUMBLE,
     BLOCK_WOOD,
     BLOCK_LOG,
+    BLOCK_TNT,
+    BLOCK_GOLD,
+    BLOCK_COUNT_, // Do not add new block below BLOCK_COUNT_, add them above instead!
 } BlockID;
 
 // Collection of indices into a TextureAtlasGrid for the 6 faces of a cube.

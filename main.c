@@ -33,7 +33,11 @@ void initCubeDrawingAtlas(Texture2D texture) {
     int squareWood = cubeDrawingAtlasAddSquareFromRowCol(cda, 0, 5);
     int squareLogSide = cubeDrawingAtlasAddSquareFromRowCol(cda, 1, 4);
     int squareLogTop = cubeDrawingAtlasAddSquareFromRowCol(cda, 1, 5);
+    int squareGoldTop = cubeDrawingAtlasAddSquareFromRowCol(cda, 1, 7);
+    int squareGoldSide = cubeDrawingAtlasAddSquareFromRowCol(cda, 2, 7);
+    int squareGoldBottom = cubeDrawingAtlasAddSquareFromRowCol(cda, 3, 7);
 
+    _Static_assert(BLOCK_COUNT_ == 9, "add a drawing entry for the block(s) that are added and increment this expected value");
     cubeDrawingAtlasAddCube(cda, BLOCK_DIRT, makeBlockDrawingKind1(squareDirt));
     cubeDrawingAtlasAddCube(cda, BLOCK_GRASS, makeBlockDrawingKind1(squareGrass));
     cubeDrawingAtlasAddCube(cda, BLOCK_GRASSY_DIRT, makeBlockDrawingKind3(squareGrassSide, squareGrass, squareDirt));
@@ -41,6 +45,8 @@ void initCubeDrawingAtlas(Texture2D texture) {
     cubeDrawingAtlasAddCube(cda, BLOCK_CRUMBLE, makeBlockDrawingKind1(squareCrumble));
     cubeDrawingAtlasAddCube(cda, BLOCK_WOOD, makeBlockDrawingKind1(squareWood));
     cubeDrawingAtlasAddCube(cda, BLOCK_LOG, makeBlockDrawingKind2(squareLogSide, squareLogTop));
+    cubeDrawingAtlasAddCube(cda, BLOCK_TNT, makeBlockDrawingKind3(squareTntSide, squareTntTop, squareTntBottom));
+    cubeDrawingAtlasAddCube(cda, BLOCK_GOLD, makeBlockDrawingKind3(squareGoldSide, squareGoldTop, squareGoldBottom));
 }
 
 
@@ -70,8 +76,8 @@ int main() {
     state->cam.projection = CAMERA_PERSPECTIVE;
 
     // Place some blocks
-    for (int x = 0; x < 7; x++) {
-        blocksSetBlockAtXYZ(&state->daBlocks, x*1, 1, 1, x);
+    for (int x = 0; x < BLOCK_COUNT_; x++) {
+        blocksSetBlockAtXYZ(&state->daBlocks, x, 1, 1, x);
     }
 
     // Grab cursor for 3D looking around

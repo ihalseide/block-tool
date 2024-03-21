@@ -12,6 +12,7 @@ void drawBlockKindAt(CubeDrawingAtlas *cda, int kindIndex, Vector3 centerPos, fl
     int i = hmgeti(cda->hmCubeKinds, kindIndex);
     if (i < 0) {
         // `kindIndex` is out of range
+        assert(0 && "`kindIndex` is invalid");
         return;
     }
     BlockDrawingKind blockKind = cda->hmCubeKinds[i].value;
