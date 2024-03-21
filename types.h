@@ -20,6 +20,17 @@ typedef enum CubeDirection {
     CUBE_DIRECTION_BACK,
 } CubeDirection;
 
+// The Block IDs
+typedef enum BlockID {
+    BLOCK_GRASS,
+    BLOCK_GRASSY_DIRT,
+    BLOCK_DIRT,
+    BLOCK_STONE,
+    BLOCK_CRUMBLE,
+    BLOCK_WOOD,
+    BLOCK_LOG,
+} BlockID;
+
 // Collection of indices into a TextureAtlasGrid for the 6 faces of a cube.
 typedef struct CubeFaces {
     int topIndex,
@@ -73,15 +84,5 @@ typedef struct FaceCraft {
     Camera cam;
     BlockPair *daBlocks; // dynamic array of `BlockPair`s
 } FaceCraft;
-
-typedef enum BlockID {
-    BLOCK_GRASS,
-    BLOCK_GRASSY_DIRT,
-    BLOCK_DIRT,
-    BLOCK_STONE,
-    BLOCK_CRUMBLE,
-    BLOCK_WOOD,
-    BLOCK_LOG,
-} BlockID;
 
 #endif // _FACECRAFT_TYPES_H_INCLUDED_
