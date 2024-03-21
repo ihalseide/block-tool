@@ -31,6 +31,10 @@ int blocksGetIndexOfBlockAt(BlockPair *daBlocks, BlockPosition blockPos);
 // - `daBlocksPtr`: is a pointer to a dynamic array of BlockPairs.
 void blocksSetBlockAt(BlockPair **daBlocksPtr, BlockPosition blockPos, int blockKindIndex);
 
+// Set a block position (X,Y,Z) to be a certain block kind within the map.
+// - `daBlocksPtr`: is a pointer to a dynamic array of BlockPairs.
+void blocksSetBlockAtXYZ(BlockPair **daBlocksPtr, int x, int y, int z, int blockKindIndex);
+
 // Map/convert from a `BlockPosition` to a `Vector3`
 Vector3 mapBlockPositionToVector3(BlockPosition blockPos);
 
