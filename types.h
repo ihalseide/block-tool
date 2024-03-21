@@ -6,9 +6,11 @@
 #include "raylib/raylib.h"
 
 
+// Check that `x` is between `mini` and `maxi` (written as `mini <= x <= maxi` in Python)
 #define BETWEEN(x, mini, maxi) ((mini <= x) && (x <= maxi))
 
 
+// Represents each of the 6 possible cube directions or faces or normals
 typedef enum CubeDirection {
     CUBE_DIRECTION_TOP,
     CUBE_DIRECTION_BOTTOM,
@@ -44,14 +46,15 @@ typedef struct BlockPair {
     int blockDrawingKindIndex;
 } BlockPair;
 
+// Keep track of a pair of 2 UV coordinates (for texture coordinates on cube faces/"squares").
 typedef struct UVPair {
     float u1, v1; // start/begin
     float u2, v2; // stop/end
 } UVPair;
 
-// Atlas that uses an array of cube faces that index into its TextureAtlasGrid's list of UVPair's
+// Atlas that uses an array of cube faces that index into its array of UVPair's
 typedef struct CubeDrawingAtlas {
-    Texture2D texture;
+    Texture2D texture; // texture/image that all of the cube and square members refer to
     int numColumns; // texture grid columns
     int numRows; // texture grid rows
     UVPair *daSquareUVs; // dynamic array
