@@ -48,15 +48,18 @@ void blocksSetBlockAt(BlockPair **daBlocksPtr, BlockPosition blockPos, int block
     *daBlocksPtr = daBlocks;
 }
 
-BlockDrawingKind makeBlockDrawingKind1(int allFacesInitialIndex) {
-    BlockDrawingKind result = (BlockDrawingKind) { 0 };
-    result.faces.topIndex = allFacesInitialIndex;
-    result.faces.bottomIndex = allFacesInitialIndex;
-    result.faces.rightIndex = allFacesInitialIndex;
-    result.faces.leftIndex = allFacesInitialIndex;
-    result.faces.frontIndex = allFacesInitialIndex;
-    result.faces.backIndex = allFacesInitialIndex;
-    return result;
+BlockDrawingKind makeBlockDrawingKind1(int all) {
+    return makeBlockDrawingKind6(all, all, all, all, all, all);
+}
+
+// Create a new BlockDrawingKind struct with the same sides, and the same top and bottom
+BlockDrawingKind makeBlockDrawingKind2(int sides, int topAndBottom) {
+    return makeBlockDrawingKind6(topAndBottom, topAndBottom, sides, sides, sides, sides);
+}
+
+// Create a new BlockDrawingKind struct with the same sides, but a different top and bottom.
+BlockDrawingKind makeBlockDrawingKind3(int sides, int top, int bottom) {
+    return makeBlockDrawingKind6(top, bottom, sides, sides, sides, sides);
 }
 
 BlockDrawingKind makeBlockDrawingKind6(int top, int bottom, int left, int right, int front, int back) {

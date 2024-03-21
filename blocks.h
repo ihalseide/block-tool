@@ -10,6 +10,12 @@ BlockPosition makeBlockPosition(int x, int y, int z);
 // Create a new BlockDrawingKind struct with an initial index that is the same for all of the faces.
 BlockDrawingKind makeBlockDrawingKind1(int allFacesInitialIndex);
 
+// Create a new BlockDrawingKind struct with the same sides, and the same top and bottom
+BlockDrawingKind makeBlockDrawingKind2(int sides, int topAndBottom);
+
+// Create a new BlockDrawingKind struct with the same sides, but a different top and bottom.
+BlockDrawingKind makeBlockDrawingKind3(int sides, int top, int bottom);
+
 // Create a new BlockDrawingKind struct by specifying all of the face indices.
 BlockDrawingKind makeBlockDrawingKind6(int top, int bottom, int left, int right, int front, int back);
 

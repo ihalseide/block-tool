@@ -56,6 +56,11 @@ CubeDrawingAtlas makeCubeDrawingAtlas16(Texture2D texture) {
     return makeCubeDrawingAtlas(texture, numRows, numCols);
 }
 
+void freeCubeDrawingAtlas(CubeDrawingAtlas cda) {
+    free(cda.daCubeKinds);
+    free(cda.daSquareUVs);
+}
+
 int cubeDrawingAtlasAddSquareFromRowCol(CubeDrawingAtlas *cda, int row, int col) {
     return cubeDrawingAtlasAddUVSquare(cda,
         makeUVPairFromGridRowColumn(row, col, cda->numRows, cda->numColumns));

@@ -18,19 +18,37 @@
 static FaceCraft *state;
 
 
+int cubeGrass, cubeDirt;
+
+
+void initCubeDrawingAtlas(Texture2D texture) {
+    CubeDrawingAtlas *cda = &state->cubeDrawAtlas;
+    *cda = makeCubeDrawingAtlas16(texture);
+
+    int squareGrassSide = cubeDrawingAtlasAddSquareFromIndex(cda, 0);
+    int squareGrass = cubeDrawingAtlasAddSquareFromIndex(cda, 1);
+    int squareDirt = cubeDrawingAtlasAddSquareFromIndex(cda, 2);
+
+    cubeGrass = cubeDrawingAtlasAddCube(cda, makeBlockDrawingKind3(squareGrassSide, squareGrass, squareDirt));
+    cubeDirt = cubeDrawingAtlasAddCube(cda, makeBlockDrawingKind1(squareDirt));
+}
+
+
 int main() {
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    // Zero-initialize the whole game state
+    state = (FaceCraft*) malloc(sizeof(*state));
+    memset(state, 0, sizeof(*state));
 
     float lookXSpeed = 0.1f;
     float lookYSpeed = 0.1f;
 
+    // Initialize window and drawing
+    const int screenWidth = 800;
+    const int screenHeight = 450;
     InitWindow(screenWidth, screenHeight, "FaceCraft");
     SetTargetFPS(60);
 
-    // Zero-initialize the whole game state
-    state = (FaceCraft*) malloc(sizeof(*state));
-    memset(state, 0, sizeof(*state));
+    initCubeDrawingAtlas(LoadTexture("texture.png"));
 
     // Init camera
     state->cam.position = (Vector3){ 0.0f, 2.0f, 0.0f };
@@ -39,16 +57,10 @@ int main() {
     state->cam.fovy = 70.0f;
     state->cam.projection = CAMERA_PERSPECTIVE;
 
-    // Init blocks atlas
-    state->cubeDrawAtlas = makeCubeDrawingAtlas16(LoadTexture("texture.png"));
-    BlockDrawingKind grassBlock = makeBlockDrawingKind1(cubeDrawingAtlasAddSquareFromIndex(&state->cubeDrawAtlas, 0));
-    grassBlock.faces.topIndex = cubeDrawingAtlasAddSquareFromIndex(&state->cubeDrawAtlas, 1);
-    grassBlock.faces.bottomIndex = cubeDrawingAtlasAddSquareFromIndex(&state->cubeDrawAtlas, 2);
-    int grassDrawId = cubeDrawingAtlasAddCube(&state->cubeDrawAtlas, grassBlock);
-
     // Place some blocks
-    blocksSetBlockAt(&state->daBlocks, makeBlockPosition(1,1,1), grassDrawId);
-    blocksSetBlockAt(&state->daBlocks, makeBlockPosition(1,5,1), grassDrawId);
+    blocksSetBlockAt(&state->daBlocks, makeBlockPosition(1,1,1), cubeGrass);
+    blocksSetBlockAt(&state->daBlocks, makeBlockPosition(1,5,1), cubeGrass);
+    blocksSetBlockAt(&state->daBlocks, makeBlockPosition(2,1,2), cubeDirt);
 
     // Prepare to enter game loop
     DisableCursor();
