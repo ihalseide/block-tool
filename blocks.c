@@ -138,3 +138,11 @@ int blockFacesGetByDirection(CubeFaces faces, CubeDirection d) {
     }
     return faces.topIndex;
 }
+
+void rotateCubeDrawingKindY(BlockDrawingKind *bdk) {
+    int originalRightVal = bdk->faces.rightIndex;
+    bdk->faces.rightIndex = bdk->faces.frontIndex;
+    bdk->faces.frontIndex = bdk->faces.leftIndex;
+    bdk->faces.leftIndex = bdk->faces.backIndex;
+    bdk->faces.backIndex = originalRightVal;
+}
