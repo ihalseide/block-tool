@@ -19,8 +19,8 @@ void drawBlockKindAt(CubeDrawingAtlas *cda, int kindIndex, Vector3 centerPos, fl
 
     int maxSquareIndex = arrlen(cda->daSquareUVs) - 1;
 
+    // Iterate the faces and draw the ones that are in the `facesFlags`
     for (CubeDirection dir = 0; dir < 6; dir++) {
-        // Iterate the faces and draw the ones that are in the `facesFlags`
         if (facesFlags & (1 << dir)) {
             int squareIndex = blockFacesGetByDirection(blockKind.faces, dir);
             if (!BETWEEN(squareIndex, 0, maxSquareIndex)) {
