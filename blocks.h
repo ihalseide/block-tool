@@ -4,6 +4,10 @@
 
 #include "types.h"
 
+// Convert normal vector to cube direction (which side of the cube).
+// Returns cube direction, or -1 if invalid.
+CubeDirection toCubeDirection(Vector3 norm);
+
 // Create a new Block Position struct
 BlockPosition makeBlockPosition(int x, int y, int z);
 

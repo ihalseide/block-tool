@@ -56,18 +56,6 @@ void initCubeDrawingAtlas(Texture2D texture) {
 
 }
 
-// Convert normal vector to cube direction (which side of the cube).
-// Returns cube direction, or -1 if invalid.
-CubeDirection toCubeDirection(Vector3 norm) {
-    if (norm.x > 0) { return CUBE_DIRECTION_RIGHT; }
-    if (norm.x < 0) { return CUBE_DIRECTION_LEFT; }
-    if (norm.y > 0) { return CUBE_DIRECTION_TOP; }
-    if (norm.y < 0) { return CUBE_DIRECTION_BOTTOM; }
-    if (norm.z > 0) { return CUBE_DIRECTION_FRONT; }
-    if (norm.z < 0) { return CUBE_DIRECTION_BACK; }
-    return -1;
-}
-
 // Return a `RayCollision` and write the `BlockPosition` of the hit to the pointer argument `blockPosResult` if a hit was found.
 RayCollision rayCollisionBlocks(BlockPosition *blockPosResult) {
     Ray ray;

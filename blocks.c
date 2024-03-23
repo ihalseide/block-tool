@@ -8,6 +8,18 @@
 #include "blocks.h"
 
 
+// Convert normal vector to cube direction (which side of the cube).
+// Returns cube direction, or -1 if invalid.
+CubeDirection toCubeDirection(Vector3 norm) {
+    if (norm.x > 0) { return CUBE_DIRECTION_RIGHT; }
+    if (norm.x < 0) { return CUBE_DIRECTION_LEFT; }
+    if (norm.y > 0) { return CUBE_DIRECTION_TOP; }
+    if (norm.y < 0) { return CUBE_DIRECTION_BOTTOM; }
+    if (norm.z > 0) { return CUBE_DIRECTION_FRONT; }
+    if (norm.z < 0) { return CUBE_DIRECTION_BACK; }
+    return -1;
+}
+
 BlockPosition makeBlockPosition(int x, int y, int z) {
     return (BlockPosition) { .x = x, .y = y, .z = z };
 }
