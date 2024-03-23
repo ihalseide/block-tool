@@ -256,5 +256,10 @@ int main() {
         EndDrawing();
     }
     
+    // Cleanup
+    freeCubeDrawingAtlas(state->cubeDrawAtlas);
+    arrfree(state->daBlocks);
+    free(state);
+    
     CloseWindow();
 }
