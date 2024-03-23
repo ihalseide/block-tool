@@ -108,6 +108,7 @@ typedef struct CubeDrawingAtlas {
     int numRows;  // texture grid rows
     UVPEntry *hmSquareUVs;  // hmap of `int` -> `UVPair`
     BDKEntry *hmCubeKinds;  // hmap of `int` -> `BlockDrawingKind`
+    int maxCubeId;  // should have the maximum cube id used as a key in `hmCubeKinds`
 } CubeDrawingAtlas;
 
 // Struct for all of the main program state.

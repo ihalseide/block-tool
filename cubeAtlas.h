@@ -28,4 +28,11 @@ void cubeDrawingAtlasAddSquareFromIndex(CubeDrawingAtlas *cda, int squareId, int
 // Add a `BlockDrawingKind` cube to the atlas B.D.K. hashmap
 void cubeDrawingAtlasAddCube(CubeDrawingAtlas *cda, int cubeId, BlockDrawingKind cube);
 
+// Get if the given cubeId is a custom cube kind.
+bool isCustomCubeKind(int cubeId);
+
+// Create a new cube kind that is a duplicate of the given cubeId and return the new id.
+int duplicateCubeKind(CubeDrawingAtlas *cda, int cubeId);
+
+
 #endif // _FACECRAFT_CUBEATLAS_H_DEFINED_

@@ -75,4 +75,20 @@ void cubeDrawingAtlasAddSquareFromIndex(CubeDrawingAtlas *cda, int squareId, int
 
 void cubeDrawingAtlasAddCube(CubeDrawingAtlas *cda, int key, BlockDrawingKind cube) {
     hmput(cda->hmCubeKinds, key, cube);
+    if (key > cda->maxCubeId) {
+        cda->maxCubeId = key;
+    }
+}
+
+// Get if the given cubeId is a custom cube kind.
+bool isCustomCubeKind(int cubeId) {
+    return cubeId >= CUBE_COUNT_;
+}
+
+// Create a new cube kind that is a duplicate of the given cubeId and return the new id.
+int duplicateCubeKind(CubeDrawingAtlas *cda, int cubeId) {
+    BlockDrawingKind bdk = hmget(cda->hmCubeKinds, cubeId);
+    int newId = cda->maxCubeId + 1;
+    cubeDrawingAtlasAddCube(cda, newId, bdk);
+    return newId;
 }
