@@ -96,8 +96,15 @@ int main() {
     float lookXSpeed = 0.1f;
     float lookYSpeed = 0.1f;
 
-    BlockPosition selectedBlockPosition;
-    bool isSelectingBlock = false;
+    BlockPosition targetBlockPos;
+    bool validTargetBlockPos = false;
+
+    // 2 selection block positions
+    char nextBlockPos = 'a';
+    BlockPosition selectedBlockPosA;
+    BlockPosition selectedBlockPosB;
+    bool validBlockPosA = false;
+    bool validBlockPosB = false;
 
     // Initialize window and drawing
     InitWindow(820, 540, "Cube Tool");
@@ -124,6 +131,8 @@ int main() {
             }
         }
     }
+    // place a panel
+    blocksSetBlockAtXYZ(&state->daPanels, -2, 2, -2, 2);
 
     // Grab cursor for 3D looking around
     DisableCursor();
@@ -142,23 +151,46 @@ int main() {
 
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
             // block breaking
-            isSelectingBlock = false;
-            RayCollision rc = rayCollisionBlocks(&selectedBlockPosition);
-            if (rc.hit) {
-                isSelectingBlock = true;
-                blocksDeleteBlockAt(&state->daBlocks, selectedBlockPosition);
+            if (!validBlockPosA && !validBlockPosB) {
+                RayCollision rc = rayCollisionBlocks(&selectedBlockPosA);
+                if (rc.hit) {
+                    validBlockPosA = true;
+                }
+                nextBlockPos = 'b';
             }
+            else if (nextBlockPos == 'a') {
+                RayCollision rc = rayCollisionBlocks(&selectedBlockPosA);
+                if (rc.hit) {
+                    validBlockPosA = true;
+                }
+                nextBlockPos = 'b';
+            }
+            else if (nextBlockPos == 'b') {
+                RayCollision rc = rayCollisionBlocks(&selectedBlockPosB);
+                if (rc.hit) {
+                    validBlockPosB = true;
+                }
+                nextBlockPos = 'a';
+            }
+            /*
+            validTargetBlockPos = false;
+            RayCollision rc = rayCollisionBlocks(&targetBlockPos);
+            if (rc.hit) {
+                validTargetBlockPos = true;
+                blocksDeleteBlockAt(&state->daBlocks, targetBlockPos);
+            }
+            */
         }
         else if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
             // block placement
-            isSelectingBlock = false;
-            RayCollision rc = rayCollisionBlocks(&selectedBlockPosition);
+            validTargetBlockPos = false;
+            RayCollision rc = rayCollisionBlocks(&targetBlockPos);
             if (rc.hit && rc.distance > 1.7f) {// this distance condition is a bad heuristic to prevent player from placing blocks on himself
-                selectedBlockPosition.x += rc.normal.x;
-                selectedBlockPosition.y += rc.normal.y;
-                selectedBlockPosition.z += rc.normal.z;
-                if (blocksGetIndexOfBlockAt(state->daBlocks, selectedBlockPosition) < 0) {
-                    blocksSetBlockAt(&state->daBlocks, selectedBlockPosition, BLOCK_CRUMBLE);
+                targetBlockPos.x += rc.normal.x;
+                targetBlockPos.y += rc.normal.y;
+                targetBlockPos.z += rc.normal.z;
+                if (blocksGetIndexOfBlockAt(state->daBlocks, targetBlockPos) < 0) {
+                    blocksSetBlockAt(&state->daBlocks, targetBlockPos, BLOCK_CRUMBLE);
                 }
             }
         }
@@ -191,11 +223,44 @@ int main() {
                     drawBlockKindAt(&state->cubeDrawAtlas, bp.blockDrawingKindIndex, centerPos, cubeSize, WHITE, -1);
                 }
 
+                for (int i = 0; i < arrlen(state->daPanels); ++i) {
+                    BlockPair bp = state->daPanels[i];
+                    Vector3 centerPos = mapBlockPositionToVector3(bp.pos);
+                    UVPair uvPair = state->cubeDrawAtlas.daSquareUVs[bp.blockDrawingKindIndex];
+                    drawCubeFaceTexture(state->cubeDrawAtlas.texture, uvPair, centerPos, 1.0f, WHITE, CUBE_DIRECTION_FRONT);
+                }
+
                 // Draw block wireframe
-                if (isSelectingBlock) {
+                if (validTargetBlockPos) {
                     Color color1 = WHITE;
                     color1.a /= 2;
-                    DrawCubeWires(mapBlockPositionToVector3(selectedBlockPosition), 1.01f, 1.01f, 1.01f, color1);
+                    DrawCubeWires(mapBlockPositionToVector3(targetBlockPos), 1.01f, 1.01f, 1.01f, color1);
+                }
+                // Draw block wireframe
+                if (validBlockPosA) {
+                    Color color1 = RED;
+                    color1.a /= 2;
+                    DrawCubeWires(mapBlockPositionToVector3(selectedBlockPosA), 1.01f, 1.01f, 1.01f, color1);
+                }
+                // Draw block wireframe
+                if (validBlockPosB) {
+                    Color color1 = BLUE;
+                    color1.a /= 2;
+                    DrawCubeWires(mapBlockPositionToVector3(selectedBlockPosB), 1.01f, 1.01f, 1.01f, color1);
+                }
+                if (validBlockPosA && validBlockPosB) {
+                    Color color1 = WHITE;
+                    Vector3 centerA = mapBlockPositionToVector3(selectedBlockPosA);
+                    Vector3 centerB = mapBlockPositionToVector3(selectedBlockPosB);
+                    DrawLine3D(centerA, centerB, color1);
+                    Vector3 bCenter;
+                    bCenter.x = (centerA.x + centerB.x) / 2.0f;
+                    bCenter.y = (centerA.y + centerB.y) / 2.0f;
+                    bCenter.z = (centerA.z + centerB.z) / 2.0f;
+                    float w = 1 + fabsf(centerA.x - centerB.x);
+                    float h = 1 + fabsf(centerA.y - centerB.y);
+                    float l = 1 + fabsf(centerA.z - centerB.z);
+                    DrawCubeWires(bCenter, w, h, l, color1);
                 }
             }
             EndMode3D();

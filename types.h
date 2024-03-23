@@ -9,6 +9,10 @@
 // Check that `x` is between `mini` and `maxi` (written as `mini <= x <= maxi` in Python)
 #define BETWEEN(x, mini, maxi) ((mini <= x) && (x <= maxi))
 
+#define MIN(a, b) (((a) < (b))? (a) : (b))
+
+#define MAX(a, b) (((a) > (b))? (a) : (b))
+
 
 // Represents each of the 6 possible cube directions or faces or normals
 typedef enum CubeDirection {
@@ -74,18 +78,19 @@ typedef struct BDKEntry {
 
 // Atlas that uses an array of cube faces that index into its array of UVPair's
 typedef struct CubeDrawingAtlas {
-    Texture2D texture; // texture/image that all of the cube and square members refer to
-    int numColumns; // texture grid columns
-    int numRows; // texture grid rows
-    UVPair *daSquareUVs; // dynamic array of `UVPair`
-    BDKEntry *hmCubeKinds; // hmap of `int` -> `BlockDrawingKind`
+    Texture2D texture;  // texture/image that all of the cube and square members refer to
+    int numColumns;  // texture grid columns
+    int numRows;  // texture grid rows
+    UVPair *daSquareUVs;  // dynamic array of `UVPair`
+    BDKEntry *hmCubeKinds;  // hmap of `int` -> `BlockDrawingKind`
 } CubeDrawingAtlas;
 
 // Struct for all of the main program state.
 typedef struct FaceCraft {
     CubeDrawingAtlas cubeDrawAtlas;
     Camera cam;
-    BlockPair *daBlocks; // dynamic array of `BlockPair`s
+    BlockPair *daBlocks;  // dynamic array of `BlockPair`s for solid cubes
+    BlockPair *daPanels;  // dynamic array of `BlockPair`s for panels / lone faces
 } FaceCraft;
 
 #endif // _FACECRAFT_TYPES_H_INCLUDED_
