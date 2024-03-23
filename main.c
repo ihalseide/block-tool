@@ -56,6 +56,18 @@ void initCubeDrawingAtlas(Texture2D texture) {
 
 }
 
+// Convert normal vector to cube direction (which side of the cube).
+// Returns cube direction, or -1 if invalid.
+CubeDirection toCubeDirection(Vector3 norm) {
+    if (norm.x > 0) { return CUBE_DIRECTION_RIGHT; }
+    if (norm.x < 0) { return CUBE_DIRECTION_LEFT; }
+    if (norm.y > 0) { return CUBE_DIRECTION_TOP; }
+    if (norm.y < 0) { return CUBE_DIRECTION_BOTTOM; }
+    if (norm.z > 0) { return CUBE_DIRECTION_FRONT; }
+    if (norm.z < 0) { return CUBE_DIRECTION_BACK; }
+    return -1;
+}
+
 // Return a `RayCollision` and write the `BlockPosition` of the hit to the pointer argument `blockPosResult` if a hit was found.
 RayCollision rayCollisionBlocks(BlockPosition *blockPosResult) {
     Ray ray;
@@ -105,7 +117,6 @@ int main() {
     BlockPosition targetBlockPos1;
     Vector3 targetNormal;
     bool validTargetBlock = false;
-    //int nextCubeIndex = CUBE_COUNT_;
 
     // Initialize window and drawing
     InitWindow(820, 540, "Cube Tool");
@@ -153,6 +164,39 @@ int main() {
             validTargetBlock = rc.hit;
             if (rc.hit) {
                 targetNormal = rc.normal;
+                int i = blocksGetIndexOfBlockAt(state->daBlocks, targetBlockPos1);
+                assert(i >= 0);
+                BlockPair bp = state->daBlocks[i];
+                printf("clicked on cube #%d at (%d, %d, %d), normal (%1.1f,%1.1f,%1.1f)\n",
+                    bp.blockDrawingKindIndex,
+                    targetBlockPos1.x, targetBlockPos1.y, targetBlockPos1.z,
+                    targetNormal.x, targetNormal.y, targetNormal.z);
+            }
+        }
+        if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT) && validTargetBlock) {
+            int i = blocksGetIndexOfBlockAt(state->daBlocks, targetBlockPos1);
+            assert(i >= 0);
+            BlockPair bp = state->daBlocks[i];
+            if (state->cubeDrawAtlas.maxCubeId == bp.blockDrawingKindIndex) {
+                // cycle current face
+                printf("cycle\n");
+                CubeDirection faceSide = toCubeDirection(targetNormal);
+                BDKEntry *entry = hmgetp(state->cubeDrawAtlas.hmCubeKinds, bp.blockDrawingKindIndex);
+                BlockDrawingKind *bdk = &entry->value;
+                assert(bdk);
+                int *facePtr = blockFaceGetPtrByDirection(&bdk->faces, faceSide);
+                int face = *facePtr;
+                face++;
+                if (face >= SQUARE_COUNT_) {
+                    face = 0;
+                }
+                *facePtr = face;
+            }
+            else {
+                // initialize
+                int newBlockKind = duplicateCubeKind(&state->cubeDrawAtlas, bp.blockDrawingKindIndex);
+                printf("created duplicate of cube kind #%d : #%d\n", bp.blockDrawingKindIndex, newBlockKind);
+                blocksSetBlockAt(&state->daBlocks, targetBlockPos1, newBlockKind);
             }
         }
 
