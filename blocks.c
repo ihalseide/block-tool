@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <stdio.h>
 
 #include "raylib/raylib.h"
 #include "stb_ds.h"
@@ -44,6 +45,7 @@ void blocksDeleteBlockAt(BlockPair **daBlocksPtr, BlockPosition blockPos) {
 
 // Set a block position to be a certain block kind within the map.
 void blocksSetBlockAt(BlockPair **daBlocksPtr, BlockPosition blockPos, int blockKindIndex) {
+    printf("setblock (%d, %d, %d) to %d\n", blockPos.x, blockPos.y, blockPos.z, blockKindIndex);
     BlockPair *daBlocks = *daBlocksPtr;
     int index = blocksGetIndexOfBlockAt(daBlocks, blockPos);
     if (index >= 0) {

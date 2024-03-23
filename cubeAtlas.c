@@ -38,16 +38,14 @@ static UVPair makeUVPairFromGridIndex(int index, int numRows, int numColumns) {
 
 // Private helper function
 // Add a UVPair square to the atlas and return the index of it in the internal square array.
-static int cubeDrawingAtlasAddUVSquare(CubeDrawingAtlas *cda, UVPair square) {
-    int resultIndex = arrlen(cda->daSquareUVs);
-    arrput(cda->daSquareUVs, square);
-    return resultIndex;
+static void cubeDrawingAtlasAddUVSquare(CubeDrawingAtlas *cda, int index, UVPair square) {
+    hmput(cda->hmSquareUVs, index, square);
 }
 
 CubeDrawingAtlas makeCubeDrawingAtlas(Texture2D texture, int numRows, int numColumns) {
     CubeDrawingAtlas result = (CubeDrawingAtlas) { 0 };
     result.hmCubeKinds = NULL;
-    result.daSquareUVs = NULL;
+    result.hmSquareUVs = NULL;
     result.texture = texture;
     result.numRows = numRows;
     result.numColumns = numColumns;
@@ -62,16 +60,16 @@ CubeDrawingAtlas makeCubeDrawingAtlas16(Texture2D texture) {
 
 void freeCubeDrawingAtlas(CubeDrawingAtlas cda) {
     hmfree(cda.hmCubeKinds);
-    arrfree(cda.daSquareUVs);
+    arrfree(cda.hmSquareUVs);
 }
 
-int cubeDrawingAtlasAddSquareFromRowCol(CubeDrawingAtlas *cda, int row, int col) {
-    return cubeDrawingAtlasAddUVSquare(cda,
+void cubeDrawingAtlasSetSquareFromRowCol(CubeDrawingAtlas *cda, int squareId, int row, int col) {
+    cubeDrawingAtlasAddUVSquare(cda, squareId,
         makeUVPairFromGridRowColumn(row, col, cda->numRows, cda->numColumns));
 }
 
-int cubeDrawingAtlasAddSquareFromIndex(CubeDrawingAtlas *cda, int index) {
-    return cubeDrawingAtlasAddUVSquare(cda,
+void cubeDrawingAtlasAddSquareFromIndex(CubeDrawingAtlas *cda, int squareId, int index) {
+    cubeDrawingAtlasAddUVSquare(cda, squareId,
         makeUVPairFromGridIndex(index, cda->numRows, cda->numColumns));
 }
 

@@ -24,19 +24,38 @@ typedef enum CubeDirection {
     CUBE_DIRECTION_BACK,
 } CubeDirection;
 
+// Block face IDs
+typedef enum SquareID {
+    SQUARE_CRUMBLE,
+    SQUARE_GRASS,
+    SQUARE_DIRT,
+    SQUARE_GRASS_SIDE,
+    SQUARE_WOOD,
+    SQUARE_LOG_TOP,
+    SQUARE_LOG_SIDE,
+    SQUARE_GOLD_SIDE,
+    SQUARE_GOLD_TOP,
+    SQUARE_GOLD_BOTTOM,
+    SQUARE_STONE,
+    SQUARE_TNT_TOP,
+    SQUARE_TNT_BOTTOM,
+    SQUARE_TNT_SIDE,
+    SQUARE_COUNT_, // Do not add new block below SQUARE_COUNT_, add them above instead!
+} SquareID;
+
 // The Block IDs
-typedef enum BlockID {
-    BLOCK_GRASS,
-    BLOCK_GRASSY_DIRT,
-    BLOCK_DIRT,
-    BLOCK_STONE,
-    BLOCK_CRUMBLE,
-    BLOCK_WOOD,
-    BLOCK_LOG,
-    BLOCK_TNT,
-    BLOCK_GOLD,
-    BLOCK_COUNT_, // Do not add new block below BLOCK_COUNT_, add them above instead!
-} BlockID;
+typedef enum CubeID {
+    CUBE_GRASS,
+    CUBE_GRASSY_DIRT,
+    CUBE_DIRT,
+    CUBE_STONE,
+    CUBE_CRUMBLE,
+    CUBE_WOOD,
+    CUBE_LOG,
+    CUBE_TNT,
+    CUBE_GOLD,
+    CUBE_COUNT_, // Do not add new block below CUBE_COUNT_, add them above instead!
+} CubeID;
 
 // Collection of indices into a TextureAtlasGrid for the 6 faces of a cube.
 typedef struct CubeFaces {
@@ -70,6 +89,12 @@ typedef struct UVPair {
     float u2, v2; // stop/end
 } UVPair;
 
+// Element type for a `hmap` of `int` -> `UVPair`.
+typedef struct UVPEntry {
+    int key;
+    UVPair value;
+} UVPEntry;
+
 // Element type for a `hmap` of `int` -> `BlockDrawingKind`.
 typedef struct BDKEntry {
     int key;
@@ -81,7 +106,7 @@ typedef struct CubeDrawingAtlas {
     Texture2D texture;  // texture/image that all of the cube and square members refer to
     int numColumns;  // texture grid columns
     int numRows;  // texture grid rows
-    UVPair *daSquareUVs;  // dynamic array of `UVPair`
+    UVPEntry *hmSquareUVs;  // hmap of `int` -> `UVPair`
     BDKEntry *hmCubeKinds;  // hmap of `int` -> `BlockDrawingKind`
 } CubeDrawingAtlas;
 
@@ -90,7 +115,7 @@ typedef struct FaceCraft {
     CubeDrawingAtlas cubeDrawAtlas;
     Camera cam;
     BlockPair *daBlocks;  // dynamic array of `BlockPair`s for solid cubes
-    BlockPair *daPanels;  // dynamic array of `BlockPair`s for panels / lone faces
+    BlockPair *daFascade;  // dynamic array of `BlockPair`s for panels / lone faces
 } FaceCraft;
 
 #endif // _FACECRAFT_TYPES_H_INCLUDED_

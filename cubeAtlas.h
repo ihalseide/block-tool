@@ -19,13 +19,13 @@ void freeCubeDrawingAtlas(CubeDrawingAtlas cda);
 // then all of the cube textures in this atlas will just look stretched. There will not be an "error".
 CubeDrawingAtlas makeCubeDrawingAtlas16(Texture2D texture);
 
-// Add a `UVPair` square created to represent a tile at (row, col) to the atlas and return the index of it in the internal square array.
-int cubeDrawingAtlasAddSquareFromRowCol(CubeDrawingAtlas *cda, int row, int col);
+// Add a `UVPair` square created to represent a tile at (row, col) to the atlas
+void cubeDrawingAtlasSetSquareFromRowCol(CubeDrawingAtlas *cda, int squareId, int row, int col);
 
-// Add a `UVPair` square to the atlas and return the index of it in the internal square array.
-int cubeDrawingAtlasAddSquareFromIndex(CubeDrawingAtlas *cda, int index);
+// Add a `UVPair` square to the atlas
+void cubeDrawingAtlasAddSquareFromIndex(CubeDrawingAtlas *cda, int squareId, int index);
 
 // Add a `BlockDrawingKind` cube to the atlas B.D.K. hashmap
-void cubeDrawingAtlasAddCube(CubeDrawingAtlas *cda, int key, BlockDrawingKind cube);
+void cubeDrawingAtlasAddCube(CubeDrawingAtlas *cda, int cubeId, BlockDrawingKind cube);
 
 #endif // _FACECRAFT_CUBEATLAS_H_DEFINED_

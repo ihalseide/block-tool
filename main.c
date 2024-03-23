@@ -24,31 +24,36 @@ void initCubeDrawingAtlas(Texture2D texture) {
     CubeDrawingAtlas *cda = &state->cubeDrawAtlas;
     *cda = makeCubeDrawingAtlas16(texture);
 
-    int squareGrassSide = cubeDrawingAtlasAddSquareFromIndex(cda, 3);
-    int squareGrass = cubeDrawingAtlasAddSquareFromIndex(cda, 4);
-    int squareDirt = cubeDrawingAtlasAddSquareFromIndex(cda, 2);
-    int squareStone = cubeDrawingAtlasAddSquareFromIndex(cda, 1);
-    int squareTntTop = cubeDrawingAtlasAddSquareFromIndex(cda, 10);
-    int squareTntSide = cubeDrawingAtlasAddSquareFromIndex(cda, 9);
-    int squareTntBottom = cubeDrawingAtlasAddSquareFromIndex(cda, 11);
-    int squareCrumble = cubeDrawingAtlasAddSquareFromRowCol(cda, 1, 0);
-    int squareWood = cubeDrawingAtlasAddSquareFromRowCol(cda, 0, 5);
-    int squareLogSide = cubeDrawingAtlasAddSquareFromRowCol(cda, 1, 4);
-    int squareLogTop = cubeDrawingAtlasAddSquareFromRowCol(cda, 1, 5);
-    int squareGoldTop = cubeDrawingAtlasAddSquareFromRowCol(cda, 1, 7);
-    int squareGoldSide = cubeDrawingAtlasAddSquareFromRowCol(cda, 2, 7);
-    int squareGoldBottom = cubeDrawingAtlasAddSquareFromRowCol(cda, 3, 7);
+    // Create squares
+    _Static_assert(SQUARE_COUNT_ == 14, "all squares should be assigned below");
+#define x(square, r, c) cubeDrawingAtlasSetSquareFromRowCol(cda, square, r, c)
+    x(SQUARE_GRASS_SIDE, 0, 3);
+    x(SQUARE_GRASS, 0, 4);
+    x(SQUARE_DIRT, 0, 2);
+    x(SQUARE_STONE, 0, 1);
+    x(SQUARE_TNT_TOP, 0, 10);
+    x(SQUARE_TNT_SIDE, 0, 9);
+    x(SQUARE_TNT_BOTTOM, 0, 11);
+    x(SQUARE_CRUMBLE, 1, 0);
+    x(SQUARE_WOOD, 0, 5);
+    x(SQUARE_LOG_SIDE, 1, 4);
+    x(SQUARE_LOG_TOP, 1, 5);
+    x(SQUARE_GOLD_TOP, 1, 7);
+    x(SQUARE_GOLD_SIDE, 2, 7);
+    x(SQUARE_GOLD_BOTTOM, 3, 7);
+#undef defSquareRC
 
-    _Static_assert(BLOCK_COUNT_ == 9, "add a drawing entry for the block(s) that are added and increment this expected value");
-    cubeDrawingAtlasAddCube(cda, BLOCK_DIRT, makeBlockDrawingKind1(squareDirt));
-    cubeDrawingAtlasAddCube(cda, BLOCK_GRASS, makeBlockDrawingKind1(squareGrass));
-    cubeDrawingAtlasAddCube(cda, BLOCK_GRASSY_DIRT, makeBlockDrawingKind3(squareGrassSide, squareGrass, squareDirt));
-    cubeDrawingAtlasAddCube(cda, BLOCK_STONE, makeBlockDrawingKind1(squareStone));
-    cubeDrawingAtlasAddCube(cda, BLOCK_CRUMBLE, makeBlockDrawingKind1(squareCrumble));
-    cubeDrawingAtlasAddCube(cda, BLOCK_WOOD, makeBlockDrawingKind1(squareWood));
-    cubeDrawingAtlasAddCube(cda, BLOCK_LOG, makeBlockDrawingKind2(squareLogSide, squareLogTop));
-    cubeDrawingAtlasAddCube(cda, BLOCK_TNT, makeBlockDrawingKind3(squareTntSide, squareTntTop, squareTntBottom));
-    cubeDrawingAtlasAddCube(cda, BLOCK_GOLD, makeBlockDrawingKind3(squareGoldSide, squareGoldTop, squareGoldBottom));
+    _Static_assert(CUBE_COUNT_ == 9, "add a drawing entry for the block(s) that are added and increment this expected value");
+    cubeDrawingAtlasAddCube(cda, CUBE_DIRT, makeBlockDrawingKind1(SQUARE_DIRT));
+    cubeDrawingAtlasAddCube(cda, CUBE_GRASS, makeBlockDrawingKind1(SQUARE_GRASS));
+    cubeDrawingAtlasAddCube(cda, CUBE_GRASSY_DIRT, makeBlockDrawingKind3(SQUARE_GRASS_SIDE, SQUARE_GRASS, SQUARE_DIRT));
+    cubeDrawingAtlasAddCube(cda, CUBE_STONE, makeBlockDrawingKind1(SQUARE_STONE));
+    cubeDrawingAtlasAddCube(cda, CUBE_CRUMBLE, makeBlockDrawingKind1(SQUARE_CRUMBLE));
+    cubeDrawingAtlasAddCube(cda, CUBE_WOOD, makeBlockDrawingKind1(SQUARE_WOOD));
+    cubeDrawingAtlasAddCube(cda, CUBE_LOG, makeBlockDrawingKind2(SQUARE_LOG_SIDE, SQUARE_LOG_TOP));
+    cubeDrawingAtlasAddCube(cda, CUBE_TNT, makeBlockDrawingKind3(SQUARE_TNT_SIDE, SQUARE_TNT_TOP, SQUARE_TNT_BOTTOM));
+    cubeDrawingAtlasAddCube(cda, CUBE_GOLD, makeBlockDrawingKind3(SQUARE_GOLD_SIDE, SQUARE_GOLD_TOP, SQUARE_GOLD_BOTTOM));
+
 }
 
 // Return a `RayCollision` and write the `BlockPosition` of the hit to the pointer argument `blockPosResult` if a hit was found.
@@ -120,19 +125,19 @@ int main() {
     state->cam.projection = CAMERA_PERSPECTIVE;
 
     // Place some blocks
-    for (int x = 0; x < BLOCK_COUNT_; x++) {
+    for (int x = 0; x < CUBE_COUNT_; x++) {
         blocksSetBlockAtXYZ(&state->daBlocks, x, 1, 1, x);
     }
     {
         int squareBounds = 15;
         for (int x = -squareBounds; x <= squareBounds; x++) {
             for (int z = -squareBounds; z <= squareBounds; z++) {
-                blocksSetBlockAtXYZ(&state->daBlocks, x, 0, z, BLOCK_GRASSY_DIRT);
+                blocksSetBlockAtXYZ(&state->daBlocks, x, 0, z, CUBE_GRASSY_DIRT);
             }
         }
     }
     // place a panel
-    blocksSetBlockAtXYZ(&state->daPanels, -2, 2, -2, 2);
+    blocksSetBlockAtXYZ(&state->daFascade, -2, 2, -2, 2);
 
     // Grab cursor for 3D looking around
     DisableCursor();
@@ -190,7 +195,7 @@ int main() {
                 targetBlockPos.y += rc.normal.y;
                 targetBlockPos.z += rc.normal.z;
                 if (blocksGetIndexOfBlockAt(state->daBlocks, targetBlockPos) < 0) {
-                    blocksSetBlockAt(&state->daBlocks, targetBlockPos, BLOCK_CRUMBLE);
+                    blocksSetBlockAt(&state->daBlocks, targetBlockPos, CUBE_CRUMBLE);
                 }
             }
         }
@@ -221,13 +226,6 @@ int main() {
                     BlockPair bp = state->daBlocks[i];
                     Vector3 centerPos = mapBlockPositionToVector3(bp.pos);
                     drawBlockKindAt(&state->cubeDrawAtlas, bp.blockDrawingKindIndex, centerPos, cubeSize, WHITE, -1);
-                }
-
-                for (int i = 0; i < arrlen(state->daPanels); ++i) {
-                    BlockPair bp = state->daPanels[i];
-                    Vector3 centerPos = mapBlockPositionToVector3(bp.pos);
-                    UVPair uvPair = state->cubeDrawAtlas.daSquareUVs[bp.blockDrawingKindIndex];
-                    drawCubeFaceTexture(state->cubeDrawAtlas.texture, uvPair, centerPos, 1.0f, WHITE, CUBE_DIRECTION_FRONT);
                 }
 
                 // Draw block wireframe
