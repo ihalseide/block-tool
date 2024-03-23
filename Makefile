@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-ggdb -Wall -Wextra -Wpedantic
+CFLAGS=-ggdb -Wall -Wextra -Wpedantic -Werror -Wfatal-errors
 LL=-L raylib -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
 
 .PHONY: run all clean raylib_stuff
