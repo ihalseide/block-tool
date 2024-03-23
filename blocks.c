@@ -99,6 +99,20 @@ BlockDrawingKind makeBlockDrawingKind6(int top, int bottom, int left, int right,
     return result;
 }
 
+int *blockFaceGetPtrByDirection(CubeFaces *faces, CubeDirection d) {
+    switch (d)
+    {
+    case CUBE_DIRECTION_TOP: return &faces->topIndex;
+    case CUBE_DIRECTION_BOTTOM: return &faces->bottomIndex;
+    case CUBE_DIRECTION_RIGHT: return &faces->rightIndex;
+    case CUBE_DIRECTION_LEFT: return &faces->leftIndex;
+    case CUBE_DIRECTION_FRONT: return &faces->frontIndex;
+    case CUBE_DIRECTION_BACK: return &faces->backIndex;
+    default: assert(0 && "invalid CubeDirection");
+    }
+    return NULL;
+}
+
 int blockFacesGetByDirection(CubeFaces faces, CubeDirection d) {
     switch (d)
     {

@@ -47,5 +47,9 @@ Vector3 mapBlockPositionToVector3(BlockPosition blockPos);
 // Get the block face field corresponding to the cube direction.
 int blockFacesGetByDirection(CubeFaces faces, CubeDirection d);
 
+// Get the address of block face field corresponding to the cube direction.
+// Purpose: for modifying the faces in-place.
+int *blockFaceGetPtrByDirection(CubeFaces *faces, CubeDirection d);
+
 
 #endif //_FACECRAFT_BLOCKS_H_INCLUDED_
