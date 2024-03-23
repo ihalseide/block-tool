@@ -101,15 +101,11 @@ int main() {
     float lookXSpeed = 0.1f;
     float lookYSpeed = 0.1f;
 
-    BlockPosition targetBlockPos;
-    bool validTargetBlockPos = false;
-
-    // 2 selection block positions
-    char nextBlockPos = 'a';
-    BlockPosition selectedBlockPosA;
-    BlockPosition selectedBlockPosB;
-    bool validBlockPosA = false;
-    bool validBlockPosB = false;
+    // cube editing
+    BlockPosition targetBlockPos1;
+    Vector3 targetNormal;
+    bool validTargetBlock = false;
+    //int nextCubeIndex = CUBE_COUNT_;
 
     // Initialize window and drawing
     InitWindow(820, 540, "Cube Tool");
@@ -136,8 +132,6 @@ int main() {
             }
         }
     }
-    // place a panel
-    blocksSetBlockAtXYZ(&state->daFascade, -2, 2, -2, 2);
 
     // Grab cursor for 3D looking around
     DisableCursor();
@@ -155,48 +149,10 @@ int main() {
         }
 
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-            // block breaking
-            if (!validBlockPosA && !validBlockPosB) {
-                RayCollision rc = rayCollisionBlocks(&selectedBlockPosA);
-                if (rc.hit) {
-                    validBlockPosA = true;
-                }
-                nextBlockPos = 'b';
-            }
-            else if (nextBlockPos == 'a') {
-                RayCollision rc = rayCollisionBlocks(&selectedBlockPosA);
-                if (rc.hit) {
-                    validBlockPosA = true;
-                }
-                nextBlockPos = 'b';
-            }
-            else if (nextBlockPos == 'b') {
-                RayCollision rc = rayCollisionBlocks(&selectedBlockPosB);
-                if (rc.hit) {
-                    validBlockPosB = true;
-                }
-                nextBlockPos = 'a';
-            }
-            /*
-            validTargetBlockPos = false;
-            RayCollision rc = rayCollisionBlocks(&targetBlockPos);
+            RayCollision rc = rayCollisionBlocks(&targetBlockPos1);
+            validTargetBlock = rc.hit;
             if (rc.hit) {
-                validTargetBlockPos = true;
-                blocksDeleteBlockAt(&state->daBlocks, targetBlockPos);
-            }
-            */
-        }
-        else if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
-            // block placement
-            validTargetBlockPos = false;
-            RayCollision rc = rayCollisionBlocks(&targetBlockPos);
-            if (rc.hit && rc.distance > 1.7f) {// this distance condition is a bad heuristic to prevent player from placing blocks on himself
-                targetBlockPos.x += rc.normal.x;
-                targetBlockPos.y += rc.normal.y;
-                targetBlockPos.z += rc.normal.z;
-                if (blocksGetIndexOfBlockAt(state->daBlocks, targetBlockPos) < 0) {
-                    blocksSetBlockAt(&state->daBlocks, targetBlockPos, CUBE_CRUMBLE);
-                }
+                targetNormal = rc.normal;
             }
         }
 
@@ -229,36 +185,10 @@ int main() {
                 }
 
                 // Draw block wireframe
-                if (validTargetBlockPos) {
-                    Color color1 = WHITE;
-                    color1.a /= 2;
-                    DrawCubeWires(mapBlockPositionToVector3(targetBlockPos), 1.01f, 1.01f, 1.01f, color1);
-                }
-                // Draw block wireframe
-                if (validBlockPosA) {
-                    Color color1 = RED;
-                    color1.a /= 2;
-                    DrawCubeWires(mapBlockPositionToVector3(selectedBlockPosA), 1.01f, 1.01f, 1.01f, color1);
-                }
-                // Draw block wireframe
-                if (validBlockPosB) {
-                    Color color1 = BLUE;
-                    color1.a /= 2;
-                    DrawCubeWires(mapBlockPositionToVector3(selectedBlockPosB), 1.01f, 1.01f, 1.01f, color1);
-                }
-                if (validBlockPosA && validBlockPosB) {
-                    Color color1 = WHITE;
-                    Vector3 centerA = mapBlockPositionToVector3(selectedBlockPosA);
-                    Vector3 centerB = mapBlockPositionToVector3(selectedBlockPosB);
-                    DrawLine3D(centerA, centerB, color1);
-                    Vector3 bCenter;
-                    bCenter.x = (centerA.x + centerB.x) / 2.0f;
-                    bCenter.y = (centerA.y + centerB.y) / 2.0f;
-                    bCenter.z = (centerA.z + centerB.z) / 2.0f;
-                    float w = 1 + fabsf(centerA.x - centerB.x);
-                    float h = 1 + fabsf(centerA.y - centerB.y);
-                    float l = 1 + fabsf(centerA.z - centerB.z);
-                    DrawCubeWires(bCenter, w, h, l, color1);
+                if (validTargetBlock) {
+                    Vector3 center = mapBlockPositionToVector3(targetBlockPos1);
+                    DrawCubeWires(center, 1.01f, 1.01f, 1.01f, WHITE);
+                    DrawLine3D(center, Vector3Add(center, targetNormal), BLUE);
                 }
             }
             EndMode3D();
