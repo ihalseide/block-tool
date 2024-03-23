@@ -54,6 +54,7 @@ typedef enum CubeID {
     CUBE_LOG,
     CUBE_TNT,
     CUBE_GOLD,
+    CUBE_TEST_BLOCK,
     CUBE_COUNT_, // Do not add new block below CUBE_COUNT_, add them above instead!
 } CubeID;
 
