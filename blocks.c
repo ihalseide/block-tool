@@ -30,6 +30,15 @@ int blocksGetIndexOfBlockAt(BlockPair *daBlocks, BlockPosition blockPos) {
     return -1;
 }
 
+BlockPair blocksGetBlockAt(BlockPair *daBlocks, BlockPosition blockPos) {
+    for (int i = 0; i < arrlen(daBlocks); i++) {
+        if (blockPositionEqual(daBlocks[i].pos, blockPos)) {
+            return daBlocks[i];
+        }
+    }
+    return (BlockPair){0};
+}
+
 void blocksSetBlockAtXYZ(BlockPair **daBlocksPtr, int x, int y, int z, int blockKindIndex) {
     blocksSetBlockAt(daBlocksPtr, makeBlockPosition(x, y, z), blockKindIndex);
 }

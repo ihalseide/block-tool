@@ -24,8 +24,11 @@ bool blockPositionEqual(BlockPosition a, BlockPosition b);
 
 // Get the index of a block in the map at the given block position.
 // Returns: index into `daBlocks` or -1 if not found.
-// NOTE: the position for the returned Block should NOT be modified!
+// NOTE: the position for the `BlockPair` at the given index should NOT be modified!
 int blocksGetIndexOfBlockAt(BlockPair *daBlocks, BlockPosition blockPos);
+
+// Return the `blockPair` at given position. Result may not be valid if there is not a block at `blockPos`.
+BlockPair blocksGetBlockAt(BlockPair *daBlocks, BlockPosition blockPos);
 
 // Set a block position to be a certain block kind within the map.
 // - `daBlocksPtr`: is a pointer to a dynamic array of BlockPairs.
